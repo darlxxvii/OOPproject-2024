@@ -1,8 +1,8 @@
-package myclasses;
+package Users;
 
 import java.time.LocalDateTime;
 
-import enums.Languages;
+import Enums.Languages;
 
 class Employee extends User {
     private boolean isResearcher;
@@ -26,12 +26,7 @@ class Employee extends User {
         return salary;
     }
 
-    public void setSalary(String salary) {
-        if (salary == null || !salary.matches("^\\d+(\\.\\d{1,2})?$")) {
-            throw new IllegalArgumentException("Salary must be a valid number.");
-        }
-        this.salary = salary;
-    }
+    
 
     public void sendRequest() {
         System.out.println(getName() + " sent a request at " + LocalDateTime.now());
