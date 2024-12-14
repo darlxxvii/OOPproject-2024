@@ -1,5 +1,6 @@
 package SystemParts;
 
+import Users.Dean;
 import Users.User;
 
 public class Request {
@@ -7,6 +8,8 @@ public class Request {
     private String content;
     private boolean isSigned; 
     private String signedBy; 
+    
+    public Request() {}
 
     public Request(User sender, String content) {
         this.sender = sender;
