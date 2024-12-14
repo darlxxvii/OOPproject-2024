@@ -1,4 +1,4 @@
-package Systemparts;
+package SystemParts;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +21,8 @@ public class NewsNotifier {
     }
 
     public void createNews(String topic, String description) {
-        News news = new News(topic, description);
-        News.getAllNews().add(news);
+        SystemParts.News news = new SystemParts.News(topic, description);
+        SystemParts.News.getAllNews().add(news);
         notifyObservers("New announcement: " + topic + " - " + description);
     }
 }
