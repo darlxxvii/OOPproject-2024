@@ -2,6 +2,7 @@ package Users;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,10 +10,15 @@ import java.util.stream.Collectors;
 
 import Enums.Status;
 import Enums.UrgencyLevel;
+import Patterns.SortingContext;
+import Research.Researcher;
+import SystemParts.Comment;
 import SystemParts.Message;
 import SystemParts.News;
 import SystemParts.Report;
 import SystemParts.Request;
+import SystemParts.School;
+import SystemParts.Course;
 
 public class Manager extends Employee {
 	private List<Student> students = new ArrayList<>();
@@ -21,9 +27,11 @@ public class Manager extends Employee {
 	private List<News> news = new ArrayList<>();
 	private List<Request> requests;
 	private List<Message> messages;
+	private SortingContext<Student> studentSortingContext = new SortingContext<>();
+    private SortingContext<Teacher> teacherSortingContext = new SortingContext<>();
 
 	public Manager() {
-
+		super();
 	}
 
 	public void approveStudentRegistration(Student student, Course course) {
@@ -122,14 +130,14 @@ public class Manager extends Employee {
 		return report;
 	}
 
-	public List<Student> viewStudentInfo(Comparator<Student> comparator) {
-		students.sort(comparator);
-		return students;
+	public void viewStudentsInfo(List<Student> students, Comparator<Student> comparator) {
+	    List<Student> sortedStudents = studentSortingContext.sort(students, comparator);
+	    sortedStudents.forEach(System.out::println);
 	}
 
-	public List<Teacher> viewTeacherInfo(Comparator<Teacher> comparator) {
-		teachers.sort(comparator);
-		return teachers;
+	public void viewTeachersInfo(List<Teacher> teachers, Comparator<Teacher> comparator) {
+	    List<Teacher> sortedTeachers = teacherSortingContext.sort(teachers, comparator);
+	    sortedTeachers.forEach(System.out::println);
 	}
 
 	public List<Request> viewRequests() {
@@ -270,5 +278,21 @@ public class Manager extends Employee {
 		}
 		return filteredMessages;
 	}
+	
+	public void addCommentToNews(News newsItem, Comment comment) {
+        newsItem.addComment(comment);
+        System.out.println("Comment added to news: " + newsItem.getTopic());
+    }
 
+    public void removeCommentFromNews(News newsItem, Comment comment) {
+        newsItem.removeComment(comment);
+        System.out.println("Comment removed from news: " + newsItem.getTopic());
+    }
+    
+    //переделать вьюшку для комментов-
+    public void viewComments(News newsItem) {
+        System.out.println("Comments for news: " + newsItem.getTopic());
+        for (Comment comment : newsItem.getComments()) {
+            System.out.println(comment.getAuthor().getName() + " (" + comment.getTimestamp() + "): " + comment.getContent());
+        }
 }
