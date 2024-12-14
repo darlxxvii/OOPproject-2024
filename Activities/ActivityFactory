@@ -1,0 +1,12 @@
+package Activities;
+
+public class ActivityFactory {
+    public static ExtracurricularActivity createActivity(String type) {
+        if (type.equals("Sports")) {
+            return new SportsActivity();
+        } else if (type.equals("Academic")) {
+            return new AcademicActivity();
+        }
+        throw new IllegalArgumentException("Unknown activity type");
+    }
+}
