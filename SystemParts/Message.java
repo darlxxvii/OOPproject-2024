@@ -13,6 +13,10 @@ public class Message {
     private LocalDateTime timestamp; 
     private Status status;   
     private UrgencyLevel priority; 
+    
+    public Message() {
+    	
+    }
 
     public Message(User sender, User recipient, String content, UrgencyLevel priority) {
         this.sender = sender;
