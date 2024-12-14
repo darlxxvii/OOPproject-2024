@@ -7,7 +7,9 @@ import Enums.Languages;
 class Employee extends User {
     private boolean isResearcher;
     private String salary;
-
+    public Employee() {
+    	super();
+    }
     public Employee(String login, String password, String name, String surname, String id, Languages en, String phoneNumber, boolean isResearcher, String salary) {
         super(login, password, name, surname, id, en , phoneNumber);
         this.isResearcher = isResearcher;
