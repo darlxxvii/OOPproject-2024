@@ -11,7 +11,7 @@ public class Report {
 
     public Report() {}
 
-
+   
     public void setTotalStudents(int totalStudents) {
         this.totalStudents = totalStudents;
     }
