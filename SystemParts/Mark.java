@@ -1,5 +1,8 @@
-package Systemparts;
+package SystemParts;
 
+import java.util.Date;
+
+import Users.Student;
 
 public class Mark {
     private Student student;
@@ -8,17 +11,26 @@ public class Mark {
     private double secondAttestation;
     private double finalExam;
     private double total;
+	private double point;
+	private Date date;
 
     public Mark(Student student, Course course) {
         this.student = student;
-        this.course = course;
+        this.setCourse(course);
         this.firstAttestation = 0;
         this.secondAttestation = 0;
         this.finalExam = 0;
         this.total = 0;
     }
 
-    public void setAttestationMarks(double firstAttestation, double secondAttestation) {
+    public Mark(Student student, Course course, double point, Date date) {
+		this.student=student;
+		this.setCourse(course);
+		this.point=point;
+		this.date=date;
+	}
+
+	public void setAttestationMarks(double firstAttestation, double secondAttestation) {
         this.firstAttestation = firstAttestation;
         this.secondAttestation = secondAttestation;
     }
@@ -58,6 +70,7 @@ public class Mark {
         else return "F (GPA: 0.0)";
     }
 
+    // Getters
     public double getFirstAttestation() {
         return firstAttestation;
     }
@@ -73,4 +86,17 @@ public class Mark {
     public double getTotal() {
         return total;
     }
+
+	public Course getCourse() {
+		return course;
+	}
+
+	public void setCourse(Course course) {
+		this.course = course;
+	}
+
+	public double getGradePoint() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }
