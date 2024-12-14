@@ -1,4 +1,4 @@
-package Systemparts;
+package SystemParts;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FAQ {
-
-    // Класс для хранения вопросов-ответов
     public static class QuestionAnswer {
         private String question;
         private String answer;
