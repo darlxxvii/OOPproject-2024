@@ -1,6 +1,7 @@
-package Systemparts;
+package SystemParts;
 
 import Users.Student;
+import Users.Teacher;
 
 import java.util.*;
 
@@ -25,6 +26,7 @@ public class Course {
         this.studentMarks = new HashMap<>();
     }
 
+    // Getters and Setters
     public String getId() {
         return id;
     }
@@ -75,6 +77,7 @@ public class Course {
         instructors.remove(teacher);
     }
 
+    // Methods for lessons
     public void addLesson(Lesson lesson) {
         lessons.add(lesson);
     }
@@ -114,4 +117,9 @@ public class Course {
     public Mark getStudentMark(Student student) {
         return studentMarks.get(student);
     }
+
+	public void viewInstructorsInfo() {
+		// TODO Auto-generated method stub
+		
+	}
 }
