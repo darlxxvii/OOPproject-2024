@@ -1,0 +1,8 @@
+package Patterns;
+
+import java.util.Comparator;
+import java.util.List;
+
+public interface SortingStrategy<T> {
+	List<T> sort(List<T> items, Comparator<T> comparator);
+}
