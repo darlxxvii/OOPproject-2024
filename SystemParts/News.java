@@ -13,9 +13,10 @@ public class News {
     private String description;
     private List<Comment> comments;
     private Boolean isPinned;
-    private NewsStatus status; 
-    private static List<News> allNews = new ArrayList<>(); 
-
+    private NewsStatus status;
+    private static List<News> allNews = new ArrayList<>();
+    public News() {
+    }
     public News(String topic, String description) {
         this.topic = topic;
         this.description = description;
@@ -40,30 +41,31 @@ public class News {
     public void unpinTopic() {
         this.isPinned = false;
     }
-    
+
     public static void createAnnouncementForResearcherPaper(String researcherName, String paperTitle) {
         String topic = "Research Paper Published by " + researcherName;
         String description = "New research paper published: " + paperTitle;
         News announcement = new News(topic, description);
-        announcement.pinTopic(); 
+        announcement.pinTopic();
         allNews.add(announcement);
         System.out.println("Announcement created for researcher paper: " + paperTitle);
     }
 
     public static void createAnnouncementForTopCitedResearcher(List<Researcher> researchers) {
         Researcher topCitedResearcher = researchers.stream()
-            .max(Comparator.comparingInt(Researcher::getCitationCount))
-            .orElse(null);
+                .max(Comparator.comparingInt(Researcher::getTotalCitations))
+                .orElse(null);
 
-        if (topCitedResearcher != null && topCitedResearcher.getCitationCount() >= CITATION_THRESHOLD) {
+        if (topCitedResearcher != null && topCitedResearcher.getTotalCitations() >= CITATION_THRESHOLD) {
             String topic = "Top Cited Researcher in the University";
             String description = topCitedResearcher.getName() + " is the top cited researcher with " +
-                                 topCitedResearcher.getCitationCount() + " citations!";
+                    topCitedResearcher.getTotalCitations() + " citations!";
             News announcement = new News(topic, description);
             allNews.add(announcement);
             System.out.println("Announcement created for top cited researcher: " + topCitedResearcher.getName());
         }
     }
+
 
     public static List<News> getAllNews() {
         return allNews;
