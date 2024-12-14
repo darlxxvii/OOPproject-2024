@@ -24,8 +24,14 @@ public abstract class User implements Serializable {
     
     protected static final String PASSWORD_PATTERN = "^(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=]).{8,}$";
     protected static final String PHONE_PATTERN = "^\\+?[0-9]{10,15}$";
-
-   
+    public User() {
+    	
+    }
+    public User(String name, String surname,String email) {
+    	this.name=name;
+    	this.surname=surname;
+    	this.email=email;
+    }
     public User(String login, String password, String name, String surname, String email, Languages language, String phoneNumber) {
         this.id = generateUniqueID();
         this.login = login;
