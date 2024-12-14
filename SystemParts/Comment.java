@@ -1,13 +1,17 @@
 package SystemParts;
 
-package SystemParts;
-
 import java.time.LocalDateTime;
+
+import Users.User;
 
 public class Comment {
     private User author;  
     private String content; 
     private LocalDateTime timestamp; 
+    
+    public Comment() {
+    	
+    }
 
     public Comment(User author, String content) {
         this.author = author;
