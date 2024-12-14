@@ -1,4 +1,6 @@
-package Systemparts;
+package SystemParts;
+
+import Users.Teacher;
 
 import java.time.LocalDateTime;
 
