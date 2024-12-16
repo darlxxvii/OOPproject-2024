@@ -30,9 +30,10 @@ public class Manager extends Employee {
 	private SortingContext<Student> studentSortingContext = new SortingContext<>();
     private SortingContext<Teacher> teacherSortingContext = new SortingContext<>();
 
-	public Manager() {
-		super();
-	}
+    public Manager(String name, String surname, String email) {
+        super(name, surname, email);
+    	this.id = generateUniqueID();
+    }
 
 	public void approveStudentRegistration(Student student, Course course) {
 		if (!courses.contains(course)) {
