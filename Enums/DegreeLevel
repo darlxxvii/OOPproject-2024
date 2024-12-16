@@ -1,5 +1,16 @@
 package Enums;
 
 public enum DegreeLevel {
-	BACHELOR, MASTER, PHD;
+	BACHELOR(120), 
+    MASTER(60),    
+    PHD(30);       
+
+    private final int requiredCredits; 
+    DegreeLevel(int requiredCredits) {
+        this.requiredCredits = requiredCredits;
+    }
+
+    public int getRequiredCredits() {
+        return requiredCredits;
+    }
 }
