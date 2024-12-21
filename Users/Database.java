@@ -24,8 +24,8 @@ public class Database {
 
     private static final String LOG_FILE = "logs.txt";
 
-    private DATABASE() {
-        // Private constructor to prevent instantiation
+    private Database() {
+        
     }
 
     public static synchronized DATABASE getInstance() {
@@ -35,7 +35,7 @@ public class Database {
         return instance;
     }
 
-    // Log actions into the TXT file
+    
     public synchronized void logAction(String action) {
         String timestampedAction = LocalDateTime.now() + " - " + action;
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(LOG_FILE, true))) {
@@ -46,7 +46,7 @@ public class Database {
         }
     }
 
-    // Example methods for interacting with the database
+    
     public void addUser(User user) {
         users.add(user);
         logAction("User added: " + user.getName());
@@ -83,5 +83,5 @@ public class Database {
         return courses;
     }
 
-    // Add other database methods as needed, ensuring actions are logged
+   
 }
