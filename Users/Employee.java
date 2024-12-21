@@ -6,11 +6,14 @@ import Enums.Languages;
 
 class Employee extends User {
     private boolean isResearcher;
-    private String salary;
-    public Employee() {
-    	super();
+    private double salary;
+    
+    public Employee(String name, String surname, String email) {
+    	super(name,surname, email);
+        this.id = generateUniqueID();
     }
-    public Employee(String login, String password, String name, String surname, String id, Languages en, String phoneNumber, boolean isResearcher, String salary) {
+
+    public Employee(String login, String password, String name, String surname, String id, Languages en, String phoneNumber, boolean isResearcher, double salary) {
         super(login, password, name, surname, id, en , phoneNumber);
         this.isResearcher = isResearcher;
         this.salary = salary;
@@ -24,11 +27,9 @@ class Employee extends User {
         this.isResearcher = isResearcher;
     }
 
-    public String getSalary() {
+    public double getSalary() {
         return salary;
     }
-
-    
 
     public void sendRequest() {
         System.out.println(getName() + " sent a request at " + LocalDateTime.now());
