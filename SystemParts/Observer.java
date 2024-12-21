@@ -1,4 +1,4 @@
-package Systemparts;
+package SystemParts;
 
 public interface Observer {
     void update(String message);
