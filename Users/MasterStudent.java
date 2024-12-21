@@ -1,17 +1,24 @@
 package Users;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Collections;
 
 import Enums.DegreeLevel;
+import Enums.EducationalProgram;
 import Research.ResearchPaper;
+import Research.Researcher;
+import SystemParts.School;
 
-public class MasterStudent extends GraduateStudent {
-
+public class MasterStudent extends Student implements Researcher {
     private int credits;
     private int yearOfStudy;
+    private List<ResearchPaper> publishedPapers;
 
-    public MasterStudent(String name, String surname, String email, int enrollmentYear) {
-        super(name, surname, email, enrollmentYear, DegreeLevel.MASTER);  
+    public MasterStudent(String name, String surname, String email, int enrollmentYear, DegreeLevel degreeLevel, School school, EducationalProgram educationalProgram) {
+        super(name, surname, email, enrollmentYear, DegreeLevel.MASTER, school, educationalProgram);
+        this.publishedPapers = new ArrayList<>();
     }
 
     public void earnCredits(int earnedCredits) {
@@ -26,38 +33,45 @@ public class MasterStudent extends GraduateStudent {
         return credits >= 18 && yearOfStudy == 2;
     }
 
+    // Researcher methods
     @Override
-    public void conductResearch() {
-        System.out.println(getName() + " is conducting research as part of the master's program.");
+    public void conductResearch(String topic) {
+        System.out.println(getName() + " is conducting research on " + topic);
     }
 
-	@Override
-	public void conductResearch(String topic) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void publishPaper(ResearchPaper paper) {
+        publishedPapers.add(paper);
+        System.out.println(getName() + " published a paper: " + paper.getTitle());
+    }
 
-	@Override
-	public void publishPaper(ResearchPaper paper) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public List<ResearchPaper> getPublishedPapers() {
+        return publishedPapers;
+    }
 
-	@Override
-	public List<ResearchPaper> getPublishedPapers() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public int calculateHIndex() {
+        // Сортируем опубликованные работы по количеству цитирований в порядке убывания
+        List<Integer> citations = publishedPapers.stream()
+                .map(ResearchPaper::getCitations)
+                .sorted(Collections.reverseOrder())
+                .collect(Collectors.toList());
 
-	@Override
-	public int calculateHIndex() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+        int hIndex = 0;
+        for (int i = 0; i < citations.size(); i++) {
+            if (citations.get(i) >= (i + 1)) {
+                hIndex = i + 1; // Находим наибольшее h, для которого работает условие
+            } else {
+                break;
+            }
+        }
+        return hIndex;
+    }
 
-	@Override
-	public int getTotalCitations() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    @Override
+    public int getTotalCitations() {
+        // Суммируем все цитирования опубликованных статей
+        return publishedPapers.stream().mapToInt(ResearchPaper::getCitations).sum();
+    }
 }
