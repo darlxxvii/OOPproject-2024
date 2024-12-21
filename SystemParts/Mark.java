@@ -11,8 +11,8 @@ public class Mark {
     private double secondAttestation;
     private double finalExam;
     private double total;
-	private double point;
-	private Date date;
+    private double point;
+    private Date date;
 
     public Mark(Student student, Course course) {
         this.student = student;
@@ -24,13 +24,13 @@ public class Mark {
     }
 
     public Mark(Student student, Course course, double point, Date date) {
-		this.student=student;
-		this.setCourse(course);
-		this.point=point;
-		this.date=date;
-	}
+        this.student = student;
+        this.setCourse(course);
+        this.point = point;
+        this.date = date;
+    }
 
-	public void setAttestationMarks(double firstAttestation, double secondAttestation) {
+    public void setAttestationMarks(double firstAttestation, double secondAttestation) {
         this.firstAttestation = firstAttestation;
         this.secondAttestation = secondAttestation;
     }
@@ -45,11 +45,10 @@ public class Mark {
             this.finalExam = finalExam;
             calculateTotal();
         } else {
-            System.out.println("Cannot set final exam mark — student is not eligible.");
+            System.out.println("Student is not allowed to Final Exam");
         }
     }
 
-    // Calculate total mark
     public double calculateTotal() {
         this.total = firstAttestation + secondAttestation + finalExam;
         return total;
@@ -70,7 +69,6 @@ public class Mark {
         else return "F (GPA: 0.0)";
     }
 
-    // Getters
     public double getFirstAttestation() {
         return firstAttestation;
     }
@@ -87,16 +85,15 @@ public class Mark {
         return total;
     }
 
-	public Course getCourse() {
-		return course;
-	}
+    public Course getCourse() {
+        return course;
+    }
 
-	public void setCourse(Course course) {
-		this.course = course;
-	}
+    public void setCourse(Course course) {
+        this.course = course;
+    }
 
-	public double getGradePoint() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    public double getGradePoint() {
+        return total;
+    }
 }
