@@ -11,6 +11,7 @@ import Research.Researcher;
 import SystemParts.Course;
 import SystemParts.DiplomaProject;
 import SystemParts.Mark;
+import SystemParts.Observer;
 import SystemParts.Request;
 import SystemParts.Review;
 import SystemParts.School;
@@ -24,13 +25,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class Student extends User implements Researcher {
+public class Student extends User implements Researcher, Observer {
 	private static int counter = 1;
     private final String studentID;
     private final int enrollmentYear;
     private final DegreeLevel degreeLevel;
     private EducationalProgram educationalProgram;
-    private Schools school;
+    private School school;
     private int credits;
     private double GPA;
     private final Map<Course, Mark> courseMarks;
@@ -44,8 +45,9 @@ public class Student extends User implements Researcher {
     private Map<Organizations, LocalDate> membershipStartDates;
     private Organizations headOrganization;
     private List<ResearchPaper> researchPapers;
+	private CompletionStatus completionStatus;
     
-    public Student(String name, String surname, String email, int enrollmentYear, DegreeLevel degreeLevel, Schools school, EducationalProgram educationalProgram) {
+    public Student(String name, String surname, String email, int enrollmentYear, DegreeLevel degreeLevel, School school, EducationalProgram educationalProgram) {
     	super(name, surname, email);
         this.enrollmentYear = enrollmentYear;
         this.setYearOfStudy(1);
@@ -62,11 +64,7 @@ public class Student extends User implements Researcher {
         this.setMembershipStartDates(new HashMap<>());
         this.setHeadOrganization(null);
         this.researchPapers = new ArrayList<>();
-        if (degreeLevel == DegreeLevel.MASTER || degreeLevel == DegreeLevel.PHD) {
-            this.isResearcher = true;
-        } else {
-            this.isResearcher = false;
-        }
+        this.isResearcher = degreeLevel == DegreeLevel.MASTER || degreeLevel == DegreeLevel.PHD;
     }
 
     @Override
@@ -179,6 +177,10 @@ public class Student extends User implements Researcher {
         }
     }
     
+    public void update(String message) {
+        System.out.println(getName() + " received notification: " + message);
+    }
+    
     public void applyForInternship(String companyName) {
         System.out.println("Applied for an internship at " + companyName);
     }
@@ -198,9 +200,11 @@ public class Student extends User implements Researcher {
     public void startDiplomaProject() {
         if (degreeLevel == DegreeLevel.BACHELOR && getYearOfStudy() == 4) {
             this.diplomaProject = new DiplomaProject("Bachelor's Thesis: " + getName());
+            this.setCompletionStatus(CompletionStatus.IN_PROGRESS);
             System.out.println("Started Bachelor's diploma project: " + diplomaProject.getProjectTitle());
         } else if (degreeLevel == DegreeLevel.MASTER || degreeLevel == DegreeLevel.PHD) {
             this.diplomaProject = new DiplomaProject("Graduate Thesis: " + getName());
+            this.setCompletionStatus(CompletionStatus.IN_PROGRESS);
             System.out.println("Started Graduate diploma project: " + diplomaProject.getProjectTitle());
         } else {
             System.out.println("Diploma project is not applicable for this degree level yet.");
@@ -321,11 +325,11 @@ public class Student extends User implements Researcher {
 		this.educationalProgram = educationalProgram;
 	}
 
-	public Schools getSchool() {
+	public School getSchool() {
 		return school;
 	}
 
-	public void setSchool(Schools school) {
+	public void setSchool(School school) {
 		this.school = school;
 	}
 
@@ -368,7 +372,14 @@ public class Student extends User implements Researcher {
 	public void setMembershipStartDates(Map<Organizations, LocalDate> membershipStartDates) {
 		this.membershipStartDates = membershipStartDates;
 	}
+	public CompletionStatus getCompletionStatus() {
+		return completionStatus;
+	}
 
+
+	public void setCompletionStatus(CompletionStatus completionStatus) {
+		this.completionStatus = completionStatus;
+	} 
 }
 /*this.enrolledCourses = new ArrayList<Course>();
 public void viewCourses() {
