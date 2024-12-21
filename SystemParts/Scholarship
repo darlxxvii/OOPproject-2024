@@ -1,0 +1,24 @@
+package SystemParts;
+
+import Users.Student;
+
+public class Scholarship {
+    private static final double REGULAR_SCHOLARSHIP_AMOUNT = 47000;
+    private static final double ENHANCED_SCHOLARSHIP_AMOUNT = 54000;
+
+    private boolean isEnhanced;
+
+    public Scholarship(Student student) {
+        double gpa = student.calculateGPA();
+        this.isEnhanced = gpa > 3.5;  
+    }
+
+    public double getAmount() {
+        return isEnhanced ? ENHANCED_SCHOLARSHIP_AMOUNT : REGULAR_SCHOLARSHIP_AMOUNT;
+    }
+
+    public boolean isEligible(Student student) {
+        double gpa = student.calculateGPA();
+        return gpa >= 3.0;  
+    }
+}
