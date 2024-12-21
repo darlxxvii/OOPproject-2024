@@ -1,5 +1,6 @@
 package Users;
 
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -7,6 +8,8 @@ import java.time.LocalDateTime;
 import java.util.Vector;
 
 public class Database {
+    private static Database instance;
+
     private Vector<Course> courses = new Vector<>();
     private Vector<User> users = new Vector<>();
     private Vector<Student> students = new Vector<>();
@@ -21,11 +24,18 @@ public class Database {
 
     private static final String LOG_FILE = "logs.txt";
 
-    public Database() {
-      
+    private DATABASE() {
+        // Private constructor to prevent instantiation
     }
 
-    //log actions into the TXT file
+    public static synchronized DATABASE getInstance() {
+        if (instance == null) {
+            instance = new DATABASE();
+        }
+        return instance;
+    }
+
+    // Log actions into the TXT file
     public synchronized void logAction(String action) {
         String timestampedAction = LocalDateTime.now() + " - " + action;
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(LOG_FILE, true))) {
@@ -36,7 +46,7 @@ public class Database {
         }
     }
 
-    //example methods for interacting
+    // Example methods for interacting with the database
     public void addUser(User user) {
         users.add(user);
         logAction("User added: " + user.getName());
@@ -73,5 +83,5 @@ public class Database {
         return courses;
     }
 
-
+    // Add other database methods as needed, ensuring actions are logged
 }
