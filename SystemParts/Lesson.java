@@ -1,8 +1,9 @@
 package SystemParts;
 
-import Users.Teacher;
-
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+import Users.Teacher;
 
 public class Lesson {
     private String id;
@@ -12,7 +13,6 @@ public class Lesson {
     private Teacher teacher;
     private String room;
 
-    // Конструктор
     public Lesson(String id, String topic, Course course, LocalDateTime date, Teacher teacher, String room) {
         this.id = id;
         this.topic = topic;
@@ -22,7 +22,6 @@ public class Lesson {
         this.room = room;
     }
 
-    // getters - setters
     public String getId() {
         return id;
     }
@@ -71,4 +70,12 @@ public class Lesson {
         this.room = room;
     }
 
+    @Override
+    public String toString() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        return  "Lesson ID: " + id + "\n" +
+                "Topic: " + topic + "\n" +
+                "Date: " + date.format(formatter) + "\n" +
+                "Room: " + room + "\n";
+    }
 }
