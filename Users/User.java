@@ -31,6 +31,7 @@ public abstract class User implements Serializable {
     	this.name=name;
     	this.surname=surname;
     	this.email=email;
+        this.id = generateUniqueID();
     }
     public User(String login, String password, String name, String surname, String email, Languages language, String phoneNumber) {
         this.id = generateUniqueID();
@@ -45,13 +46,11 @@ public abstract class User implements Serializable {
         this.phoneNumber = phoneNumber;
         this.isAuthenticated = false;
     }
-
-  
-    protected int generateUniqueID() {
-        return idCounter++;
+    
+    protected String generateUniqueID() {
+        return "U" + (idCounter++);
     }
-
-  
+ 
     public void validatePassword(String password) {
         if (!Pattern.matches(PASSWORD_PATTERN, password)) {
             throw new IllegalArgumentException("Password must have at least 8 characters, one uppercase, one number, and one special character.");
