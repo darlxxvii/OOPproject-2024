@@ -3,15 +3,18 @@ package Users;
 import java.util.List;
 
 import Enums.DegreeLevel;
+import Enums.EducationalProgram;
 import Research.ResearchPaper;
+import Research.Researcher;
+import SystemParts.School;
 
-public class PhDStudent extends GraduateStudent {
+public class PhDStudent extends Student implements Researcher{
 
     private int credits;
     private int yearOfStudy;
 
-    public PhDStudent(String name, String surname, String email, int enrollmentYear) {
-        super(name, surname, email, enrollmentYear, DegreeLevel.PHD);  
+    public PhDStudent(String name, String surname, String email, int enrollmentYear,School school, EducationalProgram educationalProgram) {
+        super(name, surname, email, enrollmentYear, DegreeLevel.PHD, school, educationalProgram);  
     }
 
     public void earnCredits(int earnedCredits) {
@@ -24,11 +27,6 @@ public class PhDStudent extends GraduateStudent {
 
     public boolean isEligibleForGraduation() {
         return credits >= 19 && yearOfStudy == 3;
-    }
-
-    @Override
-    public void conductResearch() {
-        System.out.println(getName() + " is conducting research as part of the PhD program.");
     }
 
 	@Override
