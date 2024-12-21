@@ -10,7 +10,7 @@ import Enums.Languages;
 
 public abstract class User implements Serializable {
     private static int idCounter = 1; 
-    private int id; 
+    private String id; 
     private String login;
     private String password;
     private String name;
