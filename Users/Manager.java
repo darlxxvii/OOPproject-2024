@@ -17,9 +17,10 @@ import Enums.ManagerType;
 import Enums.Schools;
 import Enums.Status;
 import Enums.UrgencyLevel;
-import Pattern.SortingContext;
+import Patterns.SortingContext;
 import Research.ResearchPaper;
 import Research.Researcher;
+import Research.ResearcherHelper;
 import SystemParts.Comment;
 import SystemParts.Course;
 import SystemParts.Mark;
@@ -29,15 +30,15 @@ import SystemParts.Report;
 import SystemParts.Request;
 import Comparators.GPAComparator;
 import Comparators.StudentNameComparator;
-import Comparators.YearsOfExpComparator;
+//import Comparators.YearsOfExpComparator;
 import Comparators.TeacherNameComparator;
-import Comparators.DegreeLevelComparator;
+//import Comparators.DegreeLevelComparator;
 
 
 public class Manager extends Employee {
-    private Map<String, Student> studentsByName; 
-    private ManagerType managerType;
-    private List<Researcher> researchers;
+	private Map<String, Student> studentsByName; 
+	private ManagerType managerType;
+    private List<ResearcherHelper> researchers;
     private List<News> allNews;
     private List<Student> students = new ArrayList<>();
     private List<Teacher> teachers = new ArrayList<>();
@@ -46,7 +47,10 @@ public class Manager extends Employee {
     private List<Request> requests;
     private List<Message> messages = new ArrayList<>();
     private List<ResearchPaper> publishedPapers = new ArrayList<>();
-    
+//    public Manager() {
+//        this.availableCourses = new ArrayList<>();
+//        this.studentRegistrations = new HashMap<>();
+//    }
     
     public Manager(String name, String surname, String email, ManagerType managerType) {
         super(name, surname, email);
@@ -58,6 +62,20 @@ public class Manager extends Employee {
         this.studentSortingContext = new SortingContext<>();
         this.teacherSortingContext = new SortingContext<>();
         this.requests = new ArrayList<>();
+    }
+    public void assignCourseToTeacher(Teacher teacher, Course course, Student student) {
+        if (teacher.getCourses().contains(course)) {
+            System.out.println(teacher.getName() + " is already assigned to the course: " + course.getName());
+            return;
+        }
+
+        // Check if the student is a PhD student and if the teacher's graduated degree level is PhD
+        if (student.getDegreeLevel() == DegreeLevel.PHD && teacher.getGraduatedDegreeLevel() == DegreeLevel.PHD) {
+            teacher.assignCourse(course);
+            System.out.println("Course " + course.getName() + " has been assigned to " + teacher.getName());
+        } else {
+            System.out.println(teacher.getName() + " is not qualified to teach this course to PhD students.");
+        }
     }
 
     public ManagerType getManagerType() {
@@ -71,10 +89,7 @@ public class Manager extends Employee {
     private final List<Course> availableCourses;
     private Map<Student, List<Course>> studentRegistrations = new HashMap<>();
 
-    public Manager() {
-        this.availableCourses = new ArrayList<>();
-        this.studentRegistrations = new HashMap<>();
-    }
+    
 
     public void addCourse(Course course, EducationalProgram program, int yearOfStudy) {
         availableCourses.add(course);
@@ -111,19 +126,14 @@ public class Manager extends Employee {
         }
     }
     
-    public void assignCourseToTeacher(Teacher teacher, Course course, Student student) {
+    public void assignCourseToTeacher(Teacher teacher, Course course) {
         if (teacher.getCourses().contains(course)) {
             System.out.println(teacher.getName() + " is already assigned to the course: " + course.getName());
             return;
         }
 
-        // Check if the student is a PhD student and if the teacher's graduated degree level is PhD
-        if (student.getDegreeLevel() == DegreeLevel.PHD && teacher.getGraduatedDegreeLevel() == DegreeLevel.PHD) {
-            teacher.assignCourse(course);
-            System.out.println("Course " + course.getName() + " has been assigned to " + teacher.getName());
-        } else {
-            System.out.println(teacher.getName() + " is not qualified to teach this course to PhD students.");
-        }
+        teacher.assignCourse(course);
+        System.out.println("Course " + course.getName() + " has been assigned to " + teacher.getName());
     }
     
     public Report generateAcademicReport(List<Student> students, List<Teacher> teachers, List<Course> courses) {
@@ -180,15 +190,15 @@ public class Manager extends Employee {
         ((List<ResearchPaper>) this.publishedPapers).add(paper);
     }
 
-    public void registerResearcher(Researcher researcher) {
+    public void registerResearcher(ResearcherHelper researcher) {
         this.researchers.add(researcher); // Ensure `researchers` is initialized as a List
     }
 
     public void generateAnnouncementForTopCitedResearcher() {
-        Researcher topCitedResearcher = null;
+        ResearcherHelper topCitedResearcher = null;
         int maxCitations = 0;
 
-        for (Researcher researcher : researchers) {
+        for (ResearcherHelper researcher : researchers) {
             int totalCitations = researcher.getTotalCitations();
             if (totalCitations > maxCitations) {
                 maxCitations = totalCitations;
@@ -206,12 +216,12 @@ public class Manager extends Employee {
         String pinnedNews = "Pinned Research news created: " + researchNews;
         news.add(pinnedNews);
     }
-//
-//    public void displayAllNews() {
-//        for (String newsItem : news) {
-//            System.out.println(newsItem);
-//        }
-//    }
+
+    public void displayAllNews() {
+        for (String newsItem : news) {
+            System.out.println(newsItem);
+        }
+    }
 
     public void addStudent(Student student) {
         students.add(student);
@@ -230,10 +240,6 @@ public class Manager extends Employee {
 
         public void sortStudentsByName() {
             studentSortingContext.sort(students, new StudentNameComparator());
-        }
-
-        public void sortStudentsByDegreeLevel() {
-            studentSortingContext.sort(students, new DegreeLevelComparator());
         }
 
         public void sortTeachersByName() {
@@ -373,22 +379,22 @@ public class Manager extends Employee {
         System.out.println("Comment added to news: " + newsItem.getTopic());
     }
 
-    public void removeCommentFromNews(News newsItem, Comment comment) {
-        newsItem.removeComment(comment);
-        System.out.println("Comment removed from news: " + newsItem.getTopic());
-    }
+//    public void removeCommentFromNews(News newsItem, Comment comment) {
+//        newsItem.removeComment(comment);
+//        System.out.println("Comment removed from news: " + newsItem.getTopic());
+//    }
 
-    public void displayAllNews() {
-    	for (News news : news) {
-            System.out.println("Topic: " + news.getTopic());
-            System.out.println("Description: " + news.getDescription());
-            System.out.println("Comments:");
-            for (Comment comment : news.getComments()) {
-                System.out.println("- " + comment.getAuthor().getName() + ": " + comment.getContent());
-            }
-            System.out.println("-----");
-        }
-    }
+//    public void displayAllNews() {
+//    	for (News news : news) {
+//            System.out.println("Topic: " + news.getTopic());
+//            System.out.println("Description: " + news.getDescription());
+//            System.out.println("Comments:");
+//            for (Comment comment : news.getComments()) {
+//                System.out.println("- " + comment.getAuthor().getName() + ": " + comment.getContent());
+//            }
+//            System.out.println("-----");
+//        }
+//    }
     public void logCourseDetails(Course course, EducationalProgram program, int yearOfStudy) {
         System.out.println(getName() + " added course: " + course.getName() + " | Program: " + program.getFullName() + " | Year: " + yearOfStudy);
     }
@@ -413,11 +419,11 @@ public class Manager extends Employee {
         System.out.println(getName() + " published paper: " + paper.getTitle());
     }
 
-    public void logResearcherRegistered(Researcher researcher) {
+    public void logResearcherRegistered(ResearcherHelper researcher) {
         System.out.println(getName() + " registered researcher: " + researcher.getName());
     }
 
-    public void logAnnouncementForTopCitedResearcher(Researcher topCitedResearcher) {
+    public void logAnnouncementForTopCitedResearcher(ResearcherHelper topCitedResearcher) {
         System.out.println(getName() + " created announcement for top cited researcher: " + topCitedResearcher.getName());
     }
 
@@ -496,8 +502,5 @@ public class Manager extends Employee {
     public void logCommentRemovedFromNews(News newsItem) {
         System.out.println(getName() + " removed comment from news: " + newsItem.getTopic());
     }
-
-   
-}
-
+  
 }
