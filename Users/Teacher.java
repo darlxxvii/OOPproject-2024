@@ -1,8 +1,10 @@
 package Users;
 
+import Enums.DegreeLevel;
 import Enums.Positions;
 import Enums.UrgencyLevel;
 import Research.Researcher;
+import Research.ResearcherHelper;
 import SystemParts.Course;
 import SystemParts.Mark;
 import SystemParts.Review;
@@ -18,16 +20,23 @@ public class Teacher extends Employee implements Researcher {
     private List<Review> reviews = new ArrayList<>();
     private List<ResearchPaper> publishedPapers = new ArrayList<>();
     private boolean isResearcher;
+	private ResearcherHelper researcherHelper; 
+	private DegreeLevel graduatedDegreeLevel;
+	
     
-    public Teacher(String name, String surname, String email,  Positions position, int yearsOfExperience) {
+    public Teacher(String name, String surname, String email,  Positions position, int yearsOfExperience,DegreeLevel graduatedDegreeLevel) {
         super(name, surname, email);
         this.position = position;
         this.yearsOfExperience = yearsOfExperience;
         this.id = generateUniqueID();
+        this.graduatedDegreeLevel = graduatedDegreeLevel;
         if (position == Positions.PROFESSOR) {
             this.isResearcher = true;
         } else {
             this.isResearcher = false;
+        }
+        if (isResearcher) {
+            this.researcherHelper = new ResearcherHelper(); 
         }
     }
     public void sendComplaint(String complaintText, UrgencyLevel urgencyLevel) {
@@ -70,48 +79,36 @@ public class Teacher extends Employee implements Researcher {
         System.out.println("Mark " + mark.getGrade() + " has been assigned to " + student.getName() + " for course " + course.getName());
         
     }
-    // Методы Researcher
+    //Researcher methods
     @Override
     public void conductResearch(String topic) {
-        if (!isResearcher) {
-            throw new IllegalStateException("This teacher is not a researcher.");
-        }
-        System.out.println(getName() + " is conducting research on: " + topic);
+        researcherHelper.conductResearch(topic);
     }
 
     @Override
     public void publishPaper(ResearchPaper paper) {
-        if (!isResearcher) {
-            throw new IllegalStateException("This teacher is not a researcher.");
-        }
-        publishedPapers.add(paper);
-        System.out.println(getName() + " published a research paper: " + paper.getTitle());
+        researcherHelper.publishPaper(paper);
     }
 
     @Override
     public List<ResearchPaper> getPublishedPapers() {
-        return publishedPapers;
+        return researcherHelper.getPublishedPapers();
     }
 
     @Override
     public int calculateHIndex() {
-        int hIndex = 0;
-        for (ResearchPaper paper : publishedPapers) {
-            if (paper.getCitations() >= hIndex + 1) {
-                hIndex++;
-            }
-        }
-        return hIndex;
-    }
-    @Override
-    public int getTotalCitations() {
-        int totalCitations = 0;
-        for (ResearchPaper paper : publishedPapers) {
-            totalCitations += paper.getCitations();
-        }
-        return totalCitations;
+        return researcherHelper.calculateHIndex();
     }
 
+    @Override
+    public int getTotalCitations() {
+        return researcherHelper.getTotalCitations();
+    }
+
+    @Override
+    public String getName() {
+        return super.getName();
+    }
     //getters and setters
 
     public Positions getPosition() {
@@ -133,18 +130,7 @@ public class Teacher extends Employee implements Researcher {
     public List<Review> getReviews() {
         return reviews;
     }
-
-System.out.println(getName() + " initialized as teacher with position: " + position + " and experience: " + yearsOfExperience);
-System.out.println(getName() + " sent complaint: " + complaintText + " with urgency: " + urgencyLevel);
-System.out.println(getName() + " viewed their info.");
-System.out.println("Course assigned to " + getName() + ": " + course.getName());
-System.out.println("Review added for " + getName() + ": " + review.getText());
-System.out.println("Mark " + mark.getGrade() + " has been assigned to " + student.getName() + " for course " + course.getName());
-System.out.println(getName() + " is conducting research on: " + topic);
-System.out.println(getName() + " published a research paper: " + paper.getTitle());
-System.out.println(getName() + " calculated H-Index: " + hIndex);
-System.out.println(getName() + " has total citations: " + totalCitations);
-System.out.println(getName() + " updated years of experience: " + yearsOfExperience);
-
-    
+    public DegreeLevel getGraduatedDegreeLevel() {
+        return graduatedDegreeLevel;
+    }
 }
