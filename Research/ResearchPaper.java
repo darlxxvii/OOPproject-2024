@@ -5,8 +5,7 @@ import java.io.*;
 import java.util.List;
 
 public class ResearchPaper implements Serializable {
-    private static final long serialVersionUID = 1L;  // Ensures backward compatibility in case the class changes
-    
+    //private static final long serialVersionUID = 1L;  
     private String title;
     private String author;
     private int citations;
@@ -23,7 +22,6 @@ public class ResearchPaper implements Serializable {
         this.keywords = keywords;
     }
     
- // Method to get citation format
     public String getCitationFormat(CitationFormat format) {
         switch (format) {
             case BIBTEX:
@@ -36,7 +34,6 @@ public class ResearchPaper implements Serializable {
         }
     }
 
-    // Method to save the object to a file using serialization
     public void serializeToFile(String fileName) {
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName))) {
             out.writeObject(this);  // Serialize the current object
@@ -46,10 +43,9 @@ public class ResearchPaper implements Serializable {
         }
     }
 
-    // Method to load the object from a file using deserialization
     public static ResearchPaper deserializeFromFile(String fileName) {
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName))) {
-            return (ResearchPaper) in.readObject();  // Deserialize the object
+            return (ResearchPaper) in.readObject();
         } catch (IOException | ClassNotFoundException e) {
             System.out.println("Error deserializing the object: " + e.getMessage());
             return null;
