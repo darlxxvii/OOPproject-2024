@@ -4,13 +4,13 @@ import Enums.CompletionStatus;
 import Enums.DegreeLevel;
 import Enums.EducationalProgram;
 import Enums.Organizations;
-import Enums.Schools;
-import Enums.UrgencyLevel;
 import Research.ResearchPaper;
 import Research.Researcher;
+import Research.ResearcherHelper;
 import SystemParts.Course;
 import SystemParts.DiplomaProject;
 import SystemParts.Mark;
+import Enums.Schools;
 import SystemParts.Observer;
 import SystemParts.Request;
 import SystemParts.Review;
@@ -25,8 +25,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import Activities.ActivityFactory;
+import Activities.ExtracurricularActivity;
+
 public class Student extends User implements Researcher, Observer {
-	private static int counter = 1;
+	private static int counter = 0;
     private final String studentID;
     private final int enrollmentYear;
     private final DegreeLevel degreeLevel;
@@ -38,7 +41,7 @@ public class Student extends User implements Researcher, Observer {
     protected Map<String, Integer> completedCourses;
     private Transcript transcript;
     private boolean isResearcher;
-    private int yearOfStudy;  
+    private int yearOfStudy=1;  
     private final List<String> activities;
     private final Map<String, LocalDate> organizations;
     private DiplomaProject diplomaProject;
@@ -46,11 +49,11 @@ public class Student extends User implements Researcher, Observer {
     private Organizations headOrganization;
     private List<ResearchPaper> researchPapers;
 	private CompletionStatus completionStatus;
+	private ResearcherHelper researcherHelper;  
     
     public Student(String name, String surname, String email, int enrollmentYear, DegreeLevel degreeLevel, Schools school, EducationalProgram educationalProgram) {
     	super(name, surname, email);
         this.enrollmentYear = enrollmentYear;
-        this.setYearOfStudy(1);
         this.GPA = 0.0;
         this.credits = 0;
         this.degreeLevel = degreeLevel;
@@ -63,22 +66,26 @@ public class Student extends User implements Researcher, Observer {
         this.organizations = new HashMap<>();
         this.setMembershipStartDates(new HashMap<>());
         this.setHeadOrganization(null);
-        this.researchPapers = new ArrayList<>();
+        this.setResearchPapers(new ArrayList<>());
         this.isResearcher = degreeLevel == DegreeLevel.MASTER || degreeLevel == DegreeLevel.PHD;
+        if (isResearcher) {
+            this.researcherHelper = new ResearcherHelper();  // Инициализация в конструкторе
+        }
     }
-
-    @Override
-	protected String generateUniqueID() {
-        String yearPrefix = String.valueOf(enrollmentYear).substring(2);
-        String degreeCode = switch (degreeLevel) {
+    protected String generateUniqueID() {
+        String yearString = String.valueOf(enrollmentYear);
+        
+        String yearPrefix = yearString.length() >= 3 ? yearString.substring(2) : yearString;  // Берем последние 2 цифры года или весь год
+  
+        String degreeCode = degreeLevel != null ? switch (degreeLevel) {
             case BACHELOR -> "BD";
             case MASTER -> "MD";
             case PHD -> "PD";
-        };
+            default -> "XX";  
+        } : "XX";  
         String uniquePart = String.format("%06d", counter++);
         return yearPrefix + degreeCode + uniquePart;
     }
-
     public void earnCredits(int credits) {
         this.credits += credits;
         System.out.println(getName() + " earned " + credits + " credits. Total: " + this.credits);
@@ -118,7 +125,10 @@ public class Student extends User implements Researcher, Observer {
         courseMarks.remove(course);
         System.out.println("Dropped course: " + course.getName());
     }
-    
+    public void addExtraCurricularActivity(String activityType) {
+        ExtracurricularActivity activity = ActivityFactory.createActivity(activityType);
+        activity.addActivity(activityType); // Add the activity
+    }
     public void viewInfoAboutTeacher(Course course) {
         course.viewInstructorsInfo();  
     }
@@ -137,7 +147,7 @@ public class Student extends User implements Researcher, Observer {
         }
         Review review = new Review(comment, rating, true); 
         teacher.addReview(review);
-        System.out.println("Your anonymous review has been added for " + teacher.getName());
+        System.out.println("Your anonymous review has been added for " + teacher.getName()+" "+teacher.getSurname());
     }
     
     public boolean isEligibleForGraduation() {
@@ -195,6 +205,7 @@ public class Student extends User implements Researcher, Observer {
         }
         this.educationalProgram = newProgram;
     }
+
     //methods for Diploma project
     public void startDiplomaProject() {
         if (degreeLevel == DegreeLevel.BACHELOR && getYearOfStudy() == 4) {
@@ -228,92 +239,44 @@ public class Student extends User implements Researcher, Observer {
         }
     }
     //Researcher Methods
+ // Researcher methods
+
     @Override
     public void conductResearch(String topic) {
-        if (!isResearcher) {
-            System.out.println(getName() + " is not a researcher and cannot conduct research.");
-            return;
-        }
-        System.out.println(getName() + " is conducting research on the topic: " + topic);
-        addActivity("Research on: " + topic);
+        researcherHelper.conductResearch(topic);
     }
 
     @Override
     public void publishPaper(ResearchPaper paper) {
-        if (!isResearcher) {
-            System.out.println(getName() + " is not a researcher and cannot publish papers.");
-            return;
-        }
-        if (researchPapers == null) {
-            researchPapers = new ArrayList<>();
-        }
-        researchPapers.add(paper);
-        System.out.println(getName() + " has published a research paper titled: " + paper.getTitle());
+        researcherHelper.publishPaper(paper);
     }
 
     @Override
     public List<ResearchPaper> getPublishedPapers() {
-        if (!isResearcher) {
-            System.out.println(getName() + " is not a researcher and has no published papers.");
-            return new ArrayList<>();
-        }
-        return researchPapers;
+        return researcherHelper.getPublishedPapers();
     }
 
     @Override
     public int calculateHIndex() {
-        if (!isResearcher) {
-            System.out.println(getName() + " is not a researcher and has no H-Index.");
-            return 0;
-        }
-        Map<String, Integer> citationCounts = new HashMap<>();
-        for (ResearchPaper paper : researchPapers) {
-            citationCounts.put(paper.getTitle(), paper.getCitations());
-        }
-        List<Integer> sortedCitations = new ArrayList<>(citationCounts.values());
-        sortedCitations.sort((a, b) -> b - a);
-        int hIndex = 0;
-        for (int i = 0; i < sortedCitations.size(); i++) {
-            if (sortedCitations.get(i) >= i + 1) {
-                hIndex = i + 1;
-            } else {
-                break;
-            }
-        }
-        return hIndex;
+        return researcherHelper.calculateHIndex();
     }
 
     @Override
     public int getTotalCitations() {
-        if (!isResearcher) {
-            System.out.println(getName() + " is not a researcher and has no citations.");
-            return 0;
-        }
-        int totalCitations = 0;
-        for (ResearchPaper paper : researchPapers) {
-            totalCitations += paper.getCitations();
-        }
-        return totalCitations;
+        return researcherHelper.getTotalCitations();
     }
 
-    // Additional method so student to become a researcher
+    // Additional method so student to become a researcher 
     public void becomeResearcher() {
         if (isResearcher) {
-            System.out.println(getName() + " is already a researcher.");
+            System.out.println(this.getName() + " is already a researcher.");
             return;
         }
         isResearcher = true;
+        this.researcherHelper = new ResearcherHelper(); // Ensure researcherHelper is initialized
         System.out.println(getName() + " has chosen to become a researcher.");
     }
-    
-    public void stopBeingResearcher() {
-        if (!isResearcher) {
-            System.out.println(getName() + " is not a researcher.");
-            return;
-        }
-        isResearcher = false;
-        System.out.println(getName() + " has chosen to stop being a researcher.");
-    }
+
     //getters and setters
     public String getStudentID() {
         return studentID;
@@ -431,11 +394,23 @@ public class Student extends User implements Researcher, Observer {
 	public CompletionStatus getCompletionStatus() {
 		return completionStatus;
 	}
-
+	
+	public String getName() {
+        return super.getName();
+    }
 
 	public void setCompletionStatus(CompletionStatus completionStatus) {
 		this.completionStatus = completionStatus;
 	} 
+	public String toString() {
+		return "Student id:"+studentID;
+	}
+	public List<ResearchPaper> getResearchPapers() {
+		return researchPapers;
+	}
+	public void setResearchPapers(List<ResearchPaper> researchPapers) {
+		this.researchPapers = researchPapers;
+	}
 }
 /*this.enrolledCourses = new ArrayList<Course>();
 public void viewCourses() {
