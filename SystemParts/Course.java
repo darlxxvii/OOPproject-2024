@@ -125,6 +125,22 @@ public class Course {
         }
     }
 
+    public void recordRetake(Student student) {
+        Mark mark = studentMarks.get(student);
+        if (mark != null) {
+            mark.addRetake();
+            if (mark.getRetakeCount() >= 3) {
+                System.out.println("Student has been banned");
+                removeStudent(student);
+            } else {
+                System.out.println("Student has retake count: " + mark.getRetakeCount());
+            }
+        } else {
+            System.out.println("Student is not registered for this course.");
+        }
+    }
+
+
     public Mark getStudentMark(Student student) {
         return studentMarks.get(student);
     }
