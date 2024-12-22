@@ -4,14 +4,9 @@ import Users.Student;
 import Users.Teacher;
 import java.util.*;
 
+import Enums.CourseType;
+
 public class Course {
-
-    public enum CourseType {
-        MAJOR,
-        MINOR,
-        ELECTIVE
-    }
-
     private String id;
     private String name;
     private Integer credits;
