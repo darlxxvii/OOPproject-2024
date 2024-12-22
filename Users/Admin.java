@@ -1,76 +1,33 @@
 package Users;
 
-import java.util.*;
-import java.io.*;
-import java.util.List;
-
+import Database.LogDatabase;
 import Enums.Languages;
 
-import java.util.ArrayList;
-import java.time.LocalDateTime;
+import java.util.List;
 
-class Admin extends User {
-    private List<User> userLog;
+public class Admin extends User {
 
-    public Admin(String login, String password, String name, String surname, String id, Languages en, String phoneNumber) {
-        super(login, password, name, surname, id, en, phoneNumber);
-        this.userLog = loadLog();
+    public Admin(String login, String password, String name, String surname, String id, Languages language, String phoneNumber) {
+        super(login, password, name, surname, id, language, phoneNumber);
     }
 
+    // Метод для просмотра всех логов
+    public List<String> viewAllLogs() {
+        List<String> logs = LogDatabase.getAllLogs(); // Получаем все логи
+        System.out.println("Администратор просматривает логи:");
+        for (String log : logs) {
+            System.out.println(log); // Выводим логи на экран
+        }
+		return logs;
+    }
+
+    // Метод для создания пользователя
     public void createUser(User user) {
-        userLog.add(user);
-        logAction("User created: " + user.getName() + " at " + LocalDateTime.now());
-        saveLog();
+        logAction("Пользователь создан: " + user.getName()); // Логируем создание пользователя
     }
 
+    // Метод для удаления пользователя
     public void removeUser(User user) {
-        if (userLog.contains(user)) {
-            userLog.remove(user);
-            logAction("User removed: " + user.getName() + " at " + LocalDateTime.now());
-            saveLog();
-        } else {
-            logAction("Attempted to remove a non-existent user.");
-        }
-    }
-
-    public List<User> seeAllUsers() {
-        logAction("Admin viewed all users at " + LocalDateTime.now());
-        return userLog;
-    }
-
-    public void addResearcher(Employee employee) {
-        if (employee.isResearcher()) {
-            createUser(employee);
-            logAction("Researcher added: " + employee.getName() + " at " + LocalDateTime.now());
-        } else {
-            logAction("Attempted to add a non-researcher as a researcher.");
-        }
-    }
-
-    public void updateUser(User user) {
-        logAction("Admin updated user: " + user.getName());
-        saveLog();
-    }
-
-    private void logAction(String message) {
-        System.out.println(message);
-    }
-
-    private void saveLog() {
-        try (FileOutputStream fos = new FileOutputStream("user_log.ser");
-             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-            oos.writeObject(userLog);
-        } catch (IOException e) {
-            System.err.println("Error saving log: " + e.getMessage());
-        }
-    }
-
-    private List<User> loadLog() {
-        try (FileInputStream fis = new FileInputStream("user_log.ser");
-             ObjectInputStream ois = new ObjectInputStream(fis)) {
-            return (List<User>) ois.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            return new ArrayList<>();
-        }
+        logAction("Пользователь удален: " + user.getName()); // Логируем удаление пользователя
     }
 }
