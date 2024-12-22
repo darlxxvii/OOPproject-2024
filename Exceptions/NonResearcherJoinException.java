@@ -1,5 +1,7 @@
 package Exceptions;
 
 public class NonResearcherJoinException extends Exception {
-	public 
+	public NonResearcherJoinException(String message) {
+        super(message);
+    }
 }
