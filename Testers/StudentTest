@@ -1,0 +1,132 @@
+package Testers;
+
+import java.util.List;
+
+import Enums.CourseType;
+import Enums.DegreeLevel;
+import Enums.EducationalProgram;
+import Enums.Schools;
+import Enums.UrgencyLevel;
+import Research.ResearchPaper;
+import Research.ResearcherHelper;
+import SystemParts.Course;
+import SystemParts.DiplomaProject;
+import SystemParts.Mark;
+import Users.Student;
+import Users.Teacher;
+import SystemParts.Review;
+import Enums.Positions;
+import Enums.Organizations;
+import Enums.ManagerType;
+import Users.Manager;
+import Users.PhDStudent;
+
+public class StudentTest {
+    public static void main(String[] args) {
+        Student student = new Student("Aruna", "Karagulova", "aruna.karagulova@example.com", 2023, DegreeLevel.BACHELOR, Schools.SITE, EducationalProgram.IS);
+        Student student2 = new Student("Zhantore", "Orazymbetov", "zh.orazymbetov@example.com", 2021, DegreeLevel.BACHELOR, Schools.SITE, EducationalProgram.RM);
+        student2.setYearOfStudy(4);
+        Manager manager = new Manager("Ansagan","Zheken","ansagan.zheken@example.com", ManagerType.OR);
+        Course course1 = new Course("1234", "Mathematics", 3, Schools.SITE, CourseType.MAJOR);
+        Course course2 = new Course("1sjaj4", "OOP", 3, Schools.SITE, CourseType.MAJOR);
+        
+        student.registerForCourse(course1,manager); 
+        student.registerForCourse(course2,manager);
+        
+        student.viewMarks(course1); 
+        student.viewMarks(course2); // Не должно быть оценок, т.к. курс только что был добавлен
+        
+        // Тестируем оценку преподавателя
+        Teacher teacher = new Teacher("Askhat", "Ergaliyev", "a_yergaliev@example.com", Positions.PROFESSOR, 10, DegreeLevel.PHD);
+        Teacher teacher2 = new Teacher("John", "Doe", "john.doe@example.com", Positions.LECTURER, 10, DegreeLevel.MASTER);
+        PhDStudent phdStudent = new PhDStudent("Jane", "Smith", "jane.smith@example.com", 2021, Schools.KMA, EducationalProgram.CSS);
+
+        manager.assignCourseToTeacher(teacher, course1, phdStudent);
+        manager.assignCourseToTeacher(teacher2, course2, phdStudent);
+        student.rateTeacher(teacher, "Great course!", 5);
+        teacher2.assignCourse(course2);
+        course2.viewInstructorsInfo();
+        teacher.viewInfoAboutTeacher();
+        //teacher.putMark(student, course1, 5.00);
+        student.viewMarks(course1);
+        
+        // Тестируем GPA
+        student.completeCourse("Intro to Programming", 5);
+        student.completeCourse("Data Structures", 6);
+        //System.out.println("Student GPA: " + student.calculateGPA()); // Выведет средний балл
+        
+        // Тестируем участие в организации
+        student.joinOrganization(Organizations.ARTHOUSE);
+        student.addActivity(student.getName()+" volunteered at Hackathon");
+        
+        // Тестируем дипломный проект
+        student.startDiplomaProject();
+        student.submitForReview();
+        student.defendProject(true);
+        student2.startDiplomaProject();
+        student2.submitForReview();
+        student2.defendProject(true);
+        
+        Review review1 = new Review("Great teaching style!", 5, false);
+        Review review2 = new Review("Needs to improve explanations.", 3, true);
+        teacher.addReview(review1);
+        teacher.addReview(review2);
+        // Тестируем исследовательскую деятельность
+        student.becomeResearcher(); // Студент становится исследователем
+        DiplomaProject diploma =new DiplomaProject("Fuzzy colors");
+        
+        student.conductResearch("AI and Machine Learning"); // Выполнение исследования
+        student.addExtraCurricularActivity("Sports");
+        student.addExtraCurricularActivity("Academic");
+        // Печатаем ID студента
+        System.out.println("Student ID of "+ student.getName()+ ": " + student.getStudentID());
+        teacher.sendComplaint("Classroom needs better equipment.", UrgencyLevel.HIGH);
+        
+        ResearcherHelper supervisor = new ResearcherHelper("Aliya", "Sagynbayeva", "a_sagynbayeva@example.com");
+        ResearchPaper paper1 = new ResearchPaper("Research Paper 1", "John Doe", "2024-12-22", 10, List.of("AI", "Machine Learning"));
+        supervisor.publishPaper(paper1);
+        paper1.addCitation();
+        paper1.addCitation();
+        paper1.addCitation();
+        paper1.addCitation();
+        ResearchPaper paper2 = new ResearchPaper("Deep Learning in Computer Vision", "Jane Smith", 
+        "2023-08-15", 
+        12, List.of("Deep Learning", "Computer Vision", "AI"));
+        paper2.addCitation();
+        paper2.addCitation();
+        paper2.addCitation(); 
+        paper2.addCitation();
+        System.out.println(paper1.getCitations());
+        
+        ResearchPaper paper3 = new ResearchPaper(
+            "Blockchain Technology in Financial Systems", 
+            "Mark Johnson", 
+            "2022-05-10", 
+            8, 
+            List.of("Blockchain", "Finance", "Cryptocurrency")
+        );
+        paper3.addCitation();
+        paper3.addCitation();  // Now the citations are 2
+        paper3.addCitation();
+        paper3.addCitation();
+        ResearchPaper paper4 = new ResearchPaper(
+            "Quantum Computing and Its Applications", 
+            "Alice Brown", 
+            "2024-01-20", 
+            15, 
+            List.of("Quantum Computing", "Physics", "Technology")
+        );
+        paper4.addCitation();
+        paper4.addCitation();
+        paper4.addCitation();
+        paper4.addCitation();  
+        supervisor.publishPaper(paper2);
+        supervisor.publishPaper(paper3);
+        supervisor.publishPaper(paper4);
+        System.out.println(supervisor.getTotalCitations());
+        System.out.println(supervisor.calculateHIndex());
+        DiplomaProject project = new DiplomaProject("AI Research");
+        project.setSupervisor(supervisor);  // This will use getName() to print the supervisor's name
+
+    }
+}
