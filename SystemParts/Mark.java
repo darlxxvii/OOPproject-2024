@@ -69,6 +69,9 @@ public class Mark {
         else return "F (GPA: 0.0)";
     }
 
+        public double getMark() {
+    	return point;
+    }
     public double getFirstAttestation() {
         return firstAttestation;
     }
