@@ -14,6 +14,7 @@ public class ResearchProject {
         this.participants = new ArrayList<>();
     }
 
+
     public String getTopic() {
         return topic;
     }
