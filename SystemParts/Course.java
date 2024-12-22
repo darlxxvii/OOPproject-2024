@@ -104,6 +104,13 @@ public class Course {
         studentMarks.remove(student);
     }
 
+        public void viewInstructorsInfo() {
+        for (Teacher teacher : instructors) {
+            teacher.viewInfoAboutTeacher();
+            System.out.println();
+        }
+    }
+
     public void putAttestationMarks(Student student, double firstAttestation, double secondAttestation) {
         Mark mark = studentMarks.get(student);
         if (mark != null) {
