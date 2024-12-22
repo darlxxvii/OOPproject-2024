@@ -14,7 +14,15 @@ public class Employee extends User {
         this.isResearcher = isResearcher;  // Устанавливаем флаг, является ли сотрудник исследователем
         this.salary = salary;  // Устанавливаем зарплату
     }
-
+     public void becomeResearcher() {
+        if (isResearcher) {
+            System.out.println(this.getName() + " is already a researcher.");
+            return;
+        }
+        isResearcher = true;
+        this.researcherHelper = new ResearcherHelper(); // Ensure researcherHelper is initialized
+        System.out.println(getName() + " has chosen to become a researcher.");
+    }
     // Метод для отправки запроса
     public void sendRequest() {
         logAction(getName() + " отправил запрос в " + LocalDateTime.now());  // Логируем отправку запроса
