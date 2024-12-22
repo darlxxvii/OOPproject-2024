@@ -1,0 +1,25 @@
+package Database;
+
+import java.util.logging.*;
+import java.io.FileHandler;
+import java.io.IOException;
+
+public class Database {
+ private static final Logger logger = Logger.getLogger(Database.class.getName());
+
+ static {
+     try {
+         // настройка файлового обработчика
+         FileHandler fileHandler = new FileHandler("logs.txt", true);
+         fileHandler.setFormatter(new SimpleFormatter());
+         logger.addHandler(fileHandler);
+     } catch (IOException e) {
+         System.err.println("Error setting up file handler for logger: " + e.getMessage());
+     }
+ }
+
+ // метод для записи действия в логи
+ public static void logAction(String action) {
+     logger.info(action);
+ }
+}
