@@ -18,44 +18,39 @@ public class Teacher extends Employee implements Researcher {
     private List<Review> reviews = new ArrayList<>();
     private List<ResearchPaper> publishedPapers = new ArrayList<>();
     private boolean isResearcher;
-
-    public Teacher(String id, String name, String surname, Positions position, int yearsOfExperience) {
-        super(id, name, surname);
+    
+    public Teacher(String name, String surname, String email,  Positions position, int yearsOfExperience) {
+        super(name, surname, email);
         this.position = position;
         this.yearsOfExperience = yearsOfExperience;
-
+        this.id = generateUniqueID();
         if (position == Positions.PROFESSOR) {
             this.isResearcher = true;
         } else {
             this.isResearcher = false;
         }
     }
-
-    public Positions getPosition() {
-        return position;
+    public void sendComplaint(String complaintText, UrgencyLevel urgencyLevel) {
+        Dean.getInstance(getName(), getSurname(), getEmail()).receiveComplaint(getName(), complaintText, urgencyLevel);
     }
-
-    public int getYearsOfExperience() {
-        return yearsOfExperience;
-    }
-
-    public void setYearsOfExperience(int yearsOfExperience) {
-        this.yearsOfExperience = yearsOfExperience;
-    }
-
-    public List<Course> getCourses() {
-        return courses;
-    }
-
-    public void assignCourse(Course course) {
+	public void viewInfoAboutTeacher() {
+		System.out.println("Teacher Name: " + getName() + " " + getSurname());
+        System.out.println("Position: " + position);
+        System.out.println("Years of Experience: " + yearsOfExperience);
+        System.out.println("Courses Taught:");
+        for (Course course : courses) {
+            System.out.println("- " + course.getName());
+        }
+        System.out.println("Student Reviews:");
+        for (Review review : reviews) {
+            System.out.println("- " + review.getText());
+        }
+	}
+	public void assignCourse(Course course) {
         courses.add(course);
         System.out.println("Course assigned to " + getName() + ": " + course.getName());
     }
-
-    public List<Review> getReviews() {
-        return reviews;
-    }
-
+	
     public void addReview(Review review) {
         reviews.add(review);
         System.out.println("Review added for " + getName() + ": " + review.getText());
@@ -66,7 +61,7 @@ public class Teacher extends Employee implements Researcher {
             return;
         }
 
-        if (!student.getEnrolledCourses().contains(course)) {
+        if (!student.getCourseMarks().containsKey(course)) {
             System.out.println("Student is not enrolled in the course: " + course.getName());
             return;
         }
@@ -108,22 +103,35 @@ public class Teacher extends Employee implements Researcher {
         }
         return hIndex;
     }
-
-    public void sendComplaint(String complaintText, UrgencyLevel urgencyLevel) {
-        Dean.getInstance().receiveComplaint(getName(), complaintText, urgencyLevel);
+    @Override
+    public int getTotalCitations() {
+        int totalCitations = 0;
+        for (ResearchPaper paper : publishedPapers) {
+            totalCitations += paper.getCitations();
+        }
+        return totalCitations;
     }
-	public void viewInfoAboutTeacher() {
-		System.out.println("Teacher Name: " + getName() + " " + getSurname());
-        System.out.println("Position: " + position);
-        System.out.println("Years of Experience: " + yearsOfExperience);
-        System.out.println("Courses Taught:");
-        for (Course course : courses) {
-            System.out.println("- " + course.getName());
-        }
-        System.out.println("Student Reviews:");
-        for (Review review : reviews) {
-            System.out.println("- " + review.getText());
-        }
-	}
 
+    //getters and setters
+
+    public Positions getPosition() {
+        return position;
+    }
+
+    public int getYearsOfExperience() {
+        return yearsOfExperience;
+    }
+
+    public void setYearsOfExperience(int yearsOfExperience) {
+        this.yearsOfExperience = yearsOfExperience;
+    }
+
+    public List<Course> getCourses() {
+        return courses;
+    }
+
+    public List<Review> getReviews() {
+        return reviews;
+    }
+    
 }
