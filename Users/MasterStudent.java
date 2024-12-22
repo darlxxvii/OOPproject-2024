@@ -7,16 +7,19 @@ import java.util.Collections;
 
 import Enums.DegreeLevel;
 import Enums.EducationalProgram;
+import Enums.Schools;
 import Research.ResearchPaper;
 import Research.Researcher;
+import Research.ResearcherHelper;
 import SystemParts.School;
 
 public class MasterStudent extends Student implements Researcher {
     private int credits;
     private int yearOfStudy;
     private List<ResearchPaper> publishedPapers;
+    private ResearcherHelper researcherHelper = new ResearcherHelper();
 
-    public MasterStudent(String name, String surname, String email, int enrollmentYear, DegreeLevel degreeLevel, School school, EducationalProgram educationalProgram) {
+    public MasterStudent(String name, String surname, String email, int enrollmentYear, DegreeLevel degreeLevel, Schools school, EducationalProgram educationalProgram) {
         super(name, surname, email, enrollmentYear, DegreeLevel.MASTER, school, educationalProgram);
         this.publishedPapers = new ArrayList<>();
     }
@@ -36,42 +39,32 @@ public class MasterStudent extends Student implements Researcher {
     // Researcher methods
     @Override
     public void conductResearch(String topic) {
-        System.out.println(getName() + " is conducting research on " + topic);
+        researcherHelper.conductResearch(topic);
     }
 
     @Override
     public void publishPaper(ResearchPaper paper) {
-        publishedPapers.add(paper);
-        System.out.println(getName() + " published a paper: " + paper.getTitle());
+        researcherHelper.publishPaper(paper);
     }
 
     @Override
     public List<ResearchPaper> getPublishedPapers() {
-        return publishedPapers;
+        return researcherHelper.getPublishedPapers();
     }
 
     @Override
     public int calculateHIndex() {
-        // Сортируем опубликованные работы по количеству цитирований в порядке убывания
-        List<Integer> citations = publishedPapers.stream()
-                .map(ResearchPaper::getCitations)
-                .sorted(Collections.reverseOrder())
-                .collect(Collectors.toList());
-
-        int hIndex = 0;
-        for (int i = 0; i < citations.size(); i++) {
-            if (citations.get(i) >= (i + 1)) {
-                hIndex = i + 1; // Находим наибольшее h, для которого работает условие
-            } else {
-                break;
-            }
-        }
-        return hIndex;
+        return researcherHelper.calculateHIndex();
     }
 
     @Override
     public int getTotalCitations() {
-        // Суммируем все цитирования опубликованных статей
-        return publishedPapers.stream().mapToInt(ResearchPaper::getCitations).sum();
+        return researcherHelper.getTotalCitations();
     }
+
+    @Override
+    public String getName() {
+        return super.getName();
+    }
+
 }
