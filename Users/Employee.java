@@ -4,46 +4,51 @@ import java.time.LocalDateTime;
 
 import Enums.Languages;
 
-class Employee extends User {
-    private boolean isResearcher;
-    private double salary;
-    
-    public Employee(String name, String surname, String email) {
-    	super(name,surname, email);
-        this.id = generateUniqueID();
+public class Employee extends User {
+    private boolean isResearcher;  // Флаг, является ли сотрудник исследователем
+    private String salary;  // Зарплата сотрудника
+
+    // Конструктор для создания сотрудника
+    public Employee(String login, String password, String name, String surname, String id, Languages en, String phoneNumber, boolean isResearcher, String salary) {
+        super(login, password, name, surname, id, en, phoneNumber);
+        this.isResearcher = isResearcher;  // Устанавливаем флаг, является ли сотрудник исследователем
+        this.salary = salary;  // Устанавливаем зарплату
     }
 
-    public Employee(String login, String password, String name, String surname, String id, Languages en, String phoneNumber, boolean isResearcher, double salary) {
-        super(login, password, name, surname, id, en , phoneNumber);
-        this.isResearcher = isResearcher;
-        this.salary = salary;
-    }
- 
-    public boolean isResearcher() {
-        return isResearcher;
-    }
-
-    public void setIsResearcher(boolean isResearcher) {
-        this.isResearcher = isResearcher;
-    }
-
-    public double getSalary() {
-        return salary;
-    }
-
+    // Метод для отправки запроса
     public void sendRequest() {
-        System.out.println(getName() + " sent a request at " + LocalDateTime.now());
+        logAction(getName() + " отправил запрос в " + LocalDateTime.now());  // Логируем отправку запроса
     }
 
+    // Метод для просмотра всех научных работ
     public void viewAllPapers() {
-        System.out.println(getName() + " is viewing all research papers.");
+        logAction(getName() + " просматривает все научные работы.");  // Логируем просмотр всех научных работ
     }
 
+    // Метод для проведения исследования
     public void conductResearch() {
-        System.out.println(getName() + " is conducting research...");
+        logAction(getName() + " проводит исследование...");  // Логируем начало исследования
     }
 
+    // Метод для публикации научных работ
     public void publishPapers() {
-        System.out.println(getName() + " published new research papers.");
+        logAction(getName() + " опубликовал новые научные работы.");  // Логируем публикацию научных работ
+    }
+
+    // Геттеры и сеттеры для дополнительных полей (необязательно, если они не нужны в дальнейшем)
+    public boolean isResearcher() {
+        return isResearcher;  // Возвращаем статус исследователя
+    }
+
+    public void setResearcher(boolean researcher) {
+        isResearcher = researcher;  // Устанавливаем статус исследователя
+    }
+
+    public String getSalary() {
+        return salary;  // Возвращаем зарплату
+    }
+
+    public void setSalary(String salary) {
+        this.salary = salary;  // Устанавливаем зарплату
     }
 }
