@@ -57,7 +57,9 @@ public class Mark {
         this.total = firstAttestation + secondAttestation + finalExam;
         return total;
     }
-
+    public double getMark() {
+    	return point;
+    }
     public String getGrade() {
         if (total >= 95) return "A (GPA: 4.0)";
         else if (total >= 90) return "A- (GPA: 3.7)";
@@ -109,9 +111,9 @@ public class Mark {
         return total;
     }
     public Date getDate() {
-		return date;
+	return date;
 	}
-	public void setDate(Date date) {
-		this.date = date;
-	}
+    public void setDate(Date date) {
+	this.date = date;
+     }
 }
