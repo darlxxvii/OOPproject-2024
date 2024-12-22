@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import Enums.CourseType;
+import Enums.DegreeLevel;
 import Enums.EducationalProgram;
 import Enums.Languages;
 import Enums.ManagerType;
@@ -34,8 +35,8 @@ import Comparators.DegreeLevelComparator;
 
 
 public class Manager extends Employee {
-	private Map<String, Student> studentsByName; 
-	private ManagerType managerType;
+    private Map<String, Student> studentsByName; 
+    private ManagerType managerType;
     private List<Researcher> researchers;
     private List<News> allNews;
     private List<Student> students = new ArrayList<>();
@@ -110,14 +111,19 @@ public class Manager extends Employee {
         }
     }
     
-    public void assignCourseToTeacher(Teacher teacher, Course course) {
+    public void assignCourseToTeacher(Teacher teacher, Course course, Student student) {
         if (teacher.getCourses().contains(course)) {
             System.out.println(teacher.getName() + " is already assigned to the course: " + course.getName());
             return;
         }
 
-        teacher.assignCourse(course);
-        System.out.println("Course " + course.getName() + " has been assigned to " + teacher.getName());
+        // Check if the student is a PhD student and if the teacher's graduated degree level is PhD
+        if (student.getDegreeLevel() == DegreeLevel.PHD && teacher.getGraduatedDegreeLevel() == DegreeLevel.PHD) {
+            teacher.assignCourse(course);
+            System.out.println("Course " + course.getName() + " has been assigned to " + teacher.getName());
+        } else {
+            System.out.println(teacher.getName() + " is not qualified to teach this course to PhD students.");
+        }
     }
     
     public Report generateAcademicReport(List<Student> students, List<Teacher> teachers, List<Course> courses) {
