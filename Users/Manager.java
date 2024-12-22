@@ -383,4 +383,33 @@ public class Manager extends Employee {
             System.out.println("-----");
         }
     }
+	
+    System.out.println(getName() + " added course: " + course.getName() + " | Program: " + program.getFullName() + " | Year: " + yearOfStudy);
+    System.out.println(getName() + " registered student " + student.getName() + " for course: " + course.getName());
+    System.out.println(getName() + " assigned course " + course.getName() + " to teacher " + teacher.getName());
+    System.out.println(getName() + " generated academic report with " + students.size() + " students, " + teachers.size() + " teachers, and " + courses.size() + " courses.");
+    System.out.println(getName() + " found course: " + course.getName());
+    System.out.println(getName() + " published paper: " + paper.getTitle());
+    System.out.println(getName() + " registered researcher: " + researcher.getName());
+    System.out.println(getName() + " created announcement for top cited researcher: " + topCitedResearcher.getName());
+    System.out.println(getName() + " created pinned research news: " + researchNews);
+    System.out.println(getName() + " added student: " + student.getName());
+    System.out.println(getName() + " added teacher: " + teacher.getName());
+    System.out.println(getName() + " sorted students by GPA.");
+    System.out.println(getName() + " sorted students by name.");
+    System.out.println(getName() + " sorted students by degree level.");
+    System.out.println(getName() + " sorted teachers by name.");
+    System.out.println(getName() + " sorted teachers by years of experience.");
+    System.out.println(getName() + " displayed all students.");
+    System.out.println(getName() + " displayed all teachers.");
+    System.out.println(getName() + " added request: " + request.getContent());
+    System.out.println(getName() + " viewed request from: " + request.getSender().getName());
+    System.out.println(getName() + " signed request: " + request.getContent());
+    System.out.println(getName() + " sent message from " + sender.getName() + " to " + recipient.getName() + " with priority: " + priority);
+    System.out.println(getName() + " marked all messages as read.");
+    System.out.println(getName() + " marked message from " + message.getSender().getName() + " to " + message.getRecipient().getName() + " as read.");
+    System.out.println(getName() + " deleted message from " + message.getSender().getName() + " to " + message.getRecipient().getName());
+    System.out.println(getName() + " added comment to news: " + newsItem.getTopic());
+    System.out.println(getName() + " removed comment from news: " + newsItem.getTopic());
+
 }
