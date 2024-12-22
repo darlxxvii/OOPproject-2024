@@ -13,10 +13,14 @@ public class News {
     private String description;
     private List<Comment> comments;
     private Boolean isPinned;
-    private NewsStatus status;
+    private NewsStatus status; 
     private static List<News> allNews = new ArrayList<>();
+    private List<Observer> observers = new ArrayList<>();
+    
     public News() {
+    	
     }
+
     public News(String topic, String description) {
         this.topic = topic;
         this.description = description;
@@ -27,39 +31,35 @@ public class News {
 
     public void addComment(Comment comment) {
         comments.add(comment);
-        sortCommentsByTimestamp();
     }
-
-    private void sortCommentsByTimestamp() {
-        comments.sort(Comparator.comparing(Comment::getTimestamp).reversed());
-    }
-
-    public void pinTopic() {
-        this.isPinned = true;
-    }
-
-    public void unpinTopic() {
-        this.isPinned = false;
-    }
-
+    
     public static void createAnnouncementForResearcherPaper(String researcherName, String paperTitle) {
         String topic = "Research Paper Published by " + researcherName;
         String description = "New research paper published: " + paperTitle;
         News announcement = new News(topic, description);
-        announcement.pinTopic();
+        announcement.pinTopic(); 
         allNews.add(announcement);
         System.out.println("Announcement created for researcher paper: " + paperTitle);
     }
 
     public static void createAnnouncementForTopCitedResearcher(List<Researcher> researchers) {
-        Researcher topCitedResearcher = researchers.stream()
-                .max(Comparator.comparingInt(Researcher::getTotalCitations))
-                .orElse(null);
+        if (researchers == null || researchers.isEmpty()) {
+            System.out.println("No researchers available.");
+            return;
+        }
 
-        if (topCitedResearcher != null && topCitedResearcher.getTotalCitations() >= CITATION_THRESHOLD) {
+        Researcher topCitedResearcher = null;
+        for (Researcher researcher : researchers) {
+            if (topCitedResearcher == null || 
+                Integer.compare(researcher.getTotalCitations(), topCitedResearcher.getTotalCitations()) > 0) {
+                topCitedResearcher = researcher;
+            }
+        }
+
+        if (topCitedResearcher != null) {
             String topic = "Top Cited Researcher in the University";
             String description = topCitedResearcher.getName() + " is the top cited researcher with " +
-                    topCitedResearcher.getTotalCitations() + " citations!";
+                                 topCitedResearcher.getTotalCitations() + " citations!";
             News announcement = new News(topic, description);
             allNews.add(announcement);
             System.out.println("Announcement created for top cited researcher: " + topCitedResearcher.getName());
@@ -101,6 +101,49 @@ public class News {
 
     public void setStatus(NewsStatus status) {
         this.status = status;
+    }
+    
+
+    public void removeComment(Comment comment) {
+        if (comments.remove(comment)) {
+            System.out.println("Comment removed: " + comment.getContent());
+        } else {
+            System.out.println("Comment not found.");
+        }
+    }
+    
+    public void addObserver(Observer observer) {
+        observers.add(observer);
+    }
+
+    public void removeObserver(Observer observer) {
+        observers.remove(observer);
+    }
+
+    private void notifyObservers(String message) {
+        for (Observer observer : observers) {
+            observer.update(message);
+        }
+    }
+    
+    public void pinTopic() {
+        this.isPinned = true;
+        notifyObservers("The topic '" + topic + "' has been pinned.");
+    }
+
+    public void unpinTopic() {
+        this.isPinned = false;
+        notifyObservers("The topic '" + topic + "' has been unpinned.");
+    }
+    
+    public static void createAnnouncement(String topic, String description, List<Observer> observers) {
+        News announcement = new News(topic, description);
+        announcement.pinTopic();
+        allNews.add(announcement);
+
+        for (Observer observer : observers) {
+            observer.update(topic + " - " + description);
+        }
     }
 
 }
