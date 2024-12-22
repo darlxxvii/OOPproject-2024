@@ -14,8 +14,8 @@ public class Mark {
     private double point;
     private Date date;
     private int retakeCount; // Счетчик пересдач
-
-
+    public Mark() {
+    }
     public Mark(Student student, Course course) {
         this.student = student;
         this.setCourse(course);
@@ -108,4 +108,10 @@ public class Mark {
     public double getGradePoint() {
         return total;
     }
+    public Date getDate() {
+		return date;
+	}
+	public void setDate(Date date) {
+		this.date = date;
+	}
 }
