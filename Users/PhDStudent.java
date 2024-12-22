@@ -14,6 +14,7 @@ public class PhDStudent extends Student implements Researcher{
 
     private int credits;
     private int yearOfStudy;
+    
     private ResearcherHelper researcherHelper = new ResearcherHelper();
     public PhDStudent(String name, String surname, String email, int enrollmentYear,Schools school, EducationalProgram educationalProgram) {
         super(name, surname, email, enrollmentYear, DegreeLevel.PHD, school, educationalProgram);  
@@ -56,8 +57,4 @@ public class PhDStudent extends Student implements Researcher{
         return researcherHelper.getTotalCitations();
     }
 
-    @Override
-    public String getName() {
-        return super.getName();
-    }
 }
