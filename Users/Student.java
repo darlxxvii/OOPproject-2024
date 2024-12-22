@@ -79,7 +79,6 @@ public class Student extends User implements Researcher, Observer {
         return yearPrefix + degreeCode + uniquePart;
     }
 
-    
     public void earnCredits(int credits) {
         this.credits += credits;
         System.out.println(getName() + " earned " + credits + " credits. Total: " + this.credits);
