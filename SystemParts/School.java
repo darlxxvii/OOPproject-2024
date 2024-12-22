@@ -23,6 +23,28 @@ public class School {
     }
 
     public boolean isProgramAvailable(EducationalProgram program) {
-        return availablePrograms.contains(program);
+        boolean isAvailable = availablePrograms.contains(program);
+
+        if (isAvailable) {
+            switch (schoolName) {
+                case SITE:
+                    return program == EducationalProgram.IS ||
+                           program == EducationalProgram.AC ||
+                           program == EducationalProgram.CSS ||
+                           program == EducationalProgram.ITM ||
+                           program == EducationalProgram.RM;
+                case SG:
+                    return program == EducationalProgram.GESMD ||
+                           program == EducationalProgram.GOG;
+                case KMA:
+                    return program == EducationalProgram.NS ||
+                           program == EducationalProgram.ME;
+                case SAM:
+                    return program == EducationalProgram.CTOS;
+                default:
+                    return false;
+            }
+        }
+        return false;
     }
 }
