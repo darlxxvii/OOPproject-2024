@@ -31,7 +31,7 @@ public class Student extends User implements Researcher, Observer {
     private final int enrollmentYear;
     private final DegreeLevel degreeLevel;
     private EducationalProgram educationalProgram;
-    private School school;
+    private Schools school;
     private int credits;
     private double GPA;
     private final Map<Course, Mark> courseMarks;
@@ -47,7 +47,7 @@ public class Student extends User implements Researcher, Observer {
     private List<ResearchPaper> researchPapers;
 	private CompletionStatus completionStatus;
     
-    public Student(String name, String surname, String email, int enrollmentYear, DegreeLevel degreeLevel, School school, EducationalProgram educationalProgram) {
+    public Student(String name, String surname, String email, int enrollmentYear, DegreeLevel degreeLevel, Schools school, EducationalProgram educationalProgram) {
     	super(name, surname, email);
         this.enrollmentYear = enrollmentYear;
         this.setYearOfStudy(1);
@@ -229,34 +229,91 @@ public class Student extends User implements Researcher, Observer {
     }
     //Researcher Methods
     @Override
-	public void conductResearch(String topic) {
-		// TODO Auto-generated method stub
-		
-	}
+    public void conductResearch(String topic) {
+        if (!isResearcher) {
+            System.out.println(getName() + " is not a researcher and cannot conduct research.");
+            return;
+        }
+        System.out.println(getName() + " is conducting research on the topic: " + topic);
+        addActivity("Research on: " + topic);
+    }
 
-	@Override
-	public void publishPaper(ResearchPaper paper) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void publishPaper(ResearchPaper paper) {
+        if (!isResearcher) {
+            System.out.println(getName() + " is not a researcher and cannot publish papers.");
+            return;
+        }
+        if (researchPapers == null) {
+            researchPapers = new ArrayList<>();
+        }
+        researchPapers.add(paper);
+        System.out.println(getName() + " has published a research paper titled: " + paper.getTitle());
+    }
 
-	@Override
-	public List<ResearchPaper> getPublishedPapers() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public List<ResearchPaper> getPublishedPapers() {
+        if (!isResearcher) {
+            System.out.println(getName() + " is not a researcher and has no published papers.");
+            return new ArrayList<>();
+        }
+        return researchPapers;
+    }
 
-	@Override
-	public int calculateHIndex() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    @Override
+    public int calculateHIndex() {
+        if (!isResearcher) {
+            System.out.println(getName() + " is not a researcher and has no H-Index.");
+            return 0;
+        }
+        Map<String, Integer> citationCounts = new HashMap<>();
+        for (ResearchPaper paper : researchPapers) {
+            citationCounts.put(paper.getTitle(), paper.getCitations());
+        }
+        List<Integer> sortedCitations = new ArrayList<>(citationCounts.values());
+        sortedCitations.sort((a, b) -> b - a);
+        int hIndex = 0;
+        for (int i = 0; i < sortedCitations.size(); i++) {
+            if (sortedCitations.get(i) >= i + 1) {
+                hIndex = i + 1;
+            } else {
+                break;
+            }
+        }
+        return hIndex;
+    }
 
-	@Override
-	public int getTotalCitations() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    @Override
+    public int getTotalCitations() {
+        if (!isResearcher) {
+            System.out.println(getName() + " is not a researcher and has no citations.");
+            return 0;
+        }
+        int totalCitations = 0;
+        for (ResearchPaper paper : researchPapers) {
+            totalCitations += paper.getCitations();
+        }
+        return totalCitations;
+    }
+
+    // Additional method so student to become a researcher
+    public void becomeResearcher() {
+        if (isResearcher) {
+            System.out.println(getName() + " is already a researcher.");
+            return;
+        }
+        isResearcher = true;
+        System.out.println(getName() + " has chosen to become a researcher.");
+    }
+    
+    public void stopBeingResearcher() {
+        if (!isResearcher) {
+            System.out.println(getName() + " is not a researcher.");
+            return;
+        }
+        isResearcher = false;
+        System.out.println(getName() + " has chosen to stop being a researcher.");
+    }
     //getters and setters
     public String getStudentID() {
         return studentID;
@@ -324,11 +381,11 @@ public class Student extends User implements Researcher, Observer {
 		this.educationalProgram = educationalProgram;
 	}
 
-	public School getSchool() {
+	public Schools getSchool() {
 		return school;
 	}
 
-	public void setSchool(School school) {
+	public void setSchool(Schools school) {
 		this.school = school;
 	}
 
