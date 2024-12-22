@@ -8,5 +8,5 @@ public interface Researcher {
     List<ResearchPaper> getPublishedPapers();
     int calculateHIndex();
     int getTotalCitations();
-	String getName();
+    String getName();
 }
