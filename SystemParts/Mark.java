@@ -13,6 +13,8 @@ public class Mark {
     private double total;
     private double point;
     private Date date;
+    private int retakeCount; // Счетчик пересдач
+
 
     public Mark(Student student, Course course) {
         this.student = student;
@@ -21,6 +23,8 @@ public class Mark {
         this.secondAttestation = 0;
         this.finalExam = 0;
         this.total = 0;
+        this.retakeCount = 0;
+
     }
 
     public Mark(Student student, Course course, double point, Date date) {
@@ -69,9 +73,14 @@ public class Mark {
         else return "F (GPA: 0.0)";
     }
 
-        public double getMark() {
-    	return point;
+    public void addRetake() {
+        retakeCount++;
     }
+
+    public int getRetakeCount() {
+        return retakeCount;
+    }
+
     public double getFirstAttestation() {
         return firstAttestation;
     }
