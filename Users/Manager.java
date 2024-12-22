@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import Enums.CourseType;
 import Enums.EducationalProgram;
 import Enums.Languages;
 import Enums.ManagerType;
@@ -27,7 +28,7 @@ import SystemParts.Report;
 import SystemParts.Request;
 import Comparators.GPAComparator;
 import Comparators.StudentNameComparator;
-import Comparators.TeacherSalaryComparator;
+import Comparators.YearsOfExpComparator;
 import Comparators.TeacherNameComparator;
 import Comparators.DegreeLevelComparator;
 
@@ -37,11 +38,14 @@ public class Manager extends Employee {
 	private ManagerType managerType;
     private List<Researcher> researchers;
     private List<News> allNews;
-    private List<Student> students;
-    private List<Teacher> teachers;
+    private List<Student> students = new ArrayList<>();
+    private List<Teacher> teachers = new ArrayList<>();
     private SortingContext<Student> studentSortingContext;
     private SortingContext<Teacher> teacherSortingContext;
     private List<Request> requests;
+    private List<Message> messages = new ArrayList<>();
+    private List<ResearchPaper> publishedPapers = new ArrayList<>();
+    
     
     public Manager(String name, String surname, String email, ManagerType managerType) {
         super(name, surname, email);
@@ -55,13 +59,6 @@ public class Manager extends Employee {
         this.requests = new ArrayList<>();
     }
 
-    public Manager(String login, String password, String name, String surname, String id, Languages language, String phoneNumber, boolean isResearcher, double salary, ManagerType managerType) {
-        super(login, password, name, surname, id, language, phoneNumber, isResearcher, salary);
-        this.managerType = managerType;
-		this.availableCourses = new ArrayList<>();
-		this.studentRegistrations = new HashMap<>();
-    }
-
     public ManagerType getManagerType() {
         return managerType;
     }
@@ -71,7 +68,7 @@ public class Manager extends Employee {
     }
     
     private final List<Course> availableCourses;
-    private final Map<Student, List<Course>> studentRegistrations;
+    private Map<Student, List<Course>> studentRegistrations = new HashMap<>();
 
     public Manager() {
         this.availableCourses = new ArrayList<>();
@@ -85,38 +82,12 @@ public class Manager extends Employee {
                            " | Year: " + yearOfStudy);
     }
     
+
     public void registerStudentForCourse(Student student, Course course) {
-        if (!student.getEnrolledCourses().contains(course)) {
-            student.getEnrolledCourses().add(course);  // Добавляем курс в список
-            System.out.println(student.getName() + " has been registered for course: " + course.getName());
+        if (student != null && course != null) {
+            student.addCourse(course);  
+            course.addStudent(student); 
         }
-    }
-
-//    public void registerStudentForCourse(Student student, Course course) {
-//        if (!availableCourses.contains(course)) {
-//            System.out.println("Course not found: " + course.getName());
-//            return;
-//        }
-//
-//        if (student.getCourseMarks().containsKey(course)) {
-//            System.out.println("Student already registered for course: " + course.getName());
-//            return;
-//        }
-//
-//        student.registerForCourse(course);
-//        studentRegistrations.computeIfAbsent(student, k -> new ArrayList<>()).add(course);
-//        System.out.println("Student " + student.getName() + " registered for course: " + course.getName());
-//    }
-
-    public void approveRegistration(Student student, Course course) {
-        List<Course> registeredCourses = studentRegistrations.get(student);
-        if (registeredCourses == null || !registeredCourses.contains(course)) {
-            System.out.println("Student has not registered for course: " + course.getName());
-            return;
-        }
-
-        System.out.println("Registration approved for student " + student.getName() +
-                           " in course: " + course.getName());
     }
 
     public void displayAvailableCourses() {
@@ -176,7 +147,7 @@ public class Manager extends Employee {
                 if (student.getEnrolledCourses().contains(course)) {
                     Mark mark = student.getCourseMarks().get(course);
                     if (mark != null) {
-                        totalGrades += mark.getGradePoint();
+                        totalGrades += mark.calculateTotal();
                         gradeCount++;
                     }
                 }
@@ -196,56 +167,60 @@ public class Manager extends Employee {
                 return course;
             }
         }
-        return null;  // Return null if the course is not found
+        return null;  
     }
-    
-//    public void addStudent(Student student) {
-//        studentsByName.put(student.getName(), student);
-//    }
-//
-//    // Method to find a student by name
-//    public Student findStudentByName(String studentName) {
-//        return studentsByName.get(studentName);  // Retrieves the student directly from the map
-//    }
 
+    public void publishPaper(ResearchPaper paper) {
+        ((List<ResearchPaper>) this.publishedPapers).add(paper);
+    }
 
     public void registerResearcher(Researcher researcher) {
-        researchers.add(researcher);
-    }
-
-   
-    public void publishResearchPaper(Researcher researcher, ResearchPaper paper) {
-        researcher.publishPaper(paper);
-        News.createAnnouncementForResearcherPaper(researcher.getName(), paper.getTitle());
-        System.out.println("Research paper announcement created for: " + researcher.getName());
+        this.researchers.add(researcher); // Ensure `researchers` is initialized as a List
     }
 
     public void generateAnnouncementForTopCitedResearcher() {
-        News.createAnnouncementForTopCitedResearcher(researchers);
+        Researcher topCitedResearcher = null;
+        int maxCitations = 0;
+
+        for (Researcher researcher : researchers) {
+            int totalCitations = researcher.getTotalCitations();
+            if (totalCitations > maxCitations) {
+                maxCitations = totalCitations;
+                topCitedResearcher = researcher;
+            }
+        }
+
+        if (topCitedResearcher != null) {
+            System.out.println("Announcement created for top cited researcher: " + topCitedResearcher.getName());
+        }
+    }
+    private List<String> news = new ArrayList<>();
+
+    public void createPinnedResearchNews(String researchNews) {
+        String pinnedNews = "Pinned Research news created: " + researchNews;
+        news.add(pinnedNews);
+    }
+//
+//    public void displayAllNews() {
+//        for (String newsItem : news) {
+//            System.out.println(newsItem);
+//        }
+//    }
+
+    public void addStudent(Student student) {
+        students.add(student);
     }
 
-    public void createPinnedResearchNews(String description) {
-        News researchNews = new News("Research", description);
-        researchNews.pinTopic(); 
-        allNews.add(researchNews);
-        System.out.println("Pinned Research news created: " + description);
+    public void addTeacher(Teacher teacher) {
+        teachers.add(teacher);
     }
 
-    public void displayAllNews() {
-        for (News news : allNews) {
-            System.out.println(news.getTopic() + ": " + news.getDescription());
+    public void sortStudentsByGPA() {
+        for (Student student : students) {
+            student.updateGPA(); 
         }
-        
-        public void addStudent(Student student) {
-            students.add(student);
-        }
-
-        public void addTeacher(Teacher teacher) {
-            teachers.add(teacher);
-        }
-        public void sortStudentsByGPA() {
-            studentSortingContext.sort(students, new GPAComparator());
-        }
+        studentSortingContext.sort(students, new GPAComparator());
+    }
 
         public void sortStudentsByName() {
             studentSortingContext.sort(students, new StudentNameComparator());
@@ -259,8 +234,8 @@ public class Manager extends Employee {
             teacherSortingContext.sort(teachers, new TeacherNameComparator());
         }
 
-        public void sortTeachersBySalary() {
-            teacherSortingContext.sort(teachers, new TeacherSalaryComparator());
+        public void sortTeachersByYears() {
+            teacherSortingContext.sort(teachers, new YearsOfExpComparator());
         }
 
         public void displayStudents() {
@@ -306,5 +281,106 @@ public class Manager extends Employee {
                 ", Phone=" + getPhoneNumber() +
                 ", Manager Type=" + managerType +
                 '}';
+    }
+	
+	public void sendMessage(User sender, User recipient, String content, UrgencyLevel priority) {
+		Message newMessage = new Message(sender, recipient, content, priority);
+		messages.add(newMessage);
+		System.out.println("Message sent from " + sender.getName() + " to " + recipient.getName());
+	}
+
+	public List<Message> viewMessagesByStatus(Status status) {
+		List<Message> filteredMessages = new ArrayList<>();
+		for (Message message : messages) {
+			if (message.getStatus() == status) {
+				filteredMessages.add(message);
+			}
+		}
+		return filteredMessages;
+	}
+
+	public List<Message> filterMessagesByPriority(UrgencyLevel priority) {
+		List<Message> filteredMessages = new ArrayList<>();
+		for (Message message : messages) {
+			if (message.filterByPriority(priority)) {
+				filteredMessages.add(message);
+			}
+		}
+		return filteredMessages;
+	}
+
+	public List<Message> viewAllMessages() {
+		return new ArrayList<>(messages);
+	}
+
+	public void markAllMessagesAsRead() {
+		for (Message message : messages) {
+			message.markAsRead();
+		}
+		System.out.println("All messages have been marked as read.");
+	}
+
+	public void markMessageAsRead(Message message) {
+		message.markAsRead();
+		System.out.println("Message from " + message.getSender().getName() + " to " + message.getRecipient().getName()
+				+ " has been marked as read.");
+	}
+
+	public void deleteMessage(Message message) {
+		messages.remove(message);
+		System.out.println("Message from " + message.getSender().getName() + " to " + message.getRecipient().getName()
+				+ " has been deleted.");
+	}
+
+	public List<Message> viewMessagesByRecipient(User recipient) {
+		List<Message> filteredMessages = new ArrayList<>();
+		for (Message message : messages) {
+			if (message.getRecipient().equals(recipient)) {
+				filteredMessages.add(message);
+			}
+		}
+		return filteredMessages;
+	}
+
+	public List<Message> viewMessagesBySender(User sender) {
+		List<Message> filteredMessages = new ArrayList<>();
+		for (Message message : messages) {
+			if (message.getSender().equals(sender)) {
+				filteredMessages.add(message);
+			}
+		}
+		return filteredMessages;
+	}
+
+	public List<Message> viewMessages(Status status, UrgencyLevel priority) {
+		List<Message> filteredMessages = new ArrayList<>();
+		for (Message message : messages) {
+			if (message.getStatus() == status && message.getPriority() == priority) {
+				filteredMessages.add(message);
+			}
+		}
+		return filteredMessages;
+	}
+	
+	public void addCommentToNews(News newsItem, Comment comment) {
+        newsItem.addComment(comment);
+        System.out.println("Comment added to news: " + newsItem.getTopic());
+    }
+
+    public void removeCommentFromNews(News newsItem, Comment comment) {
+        newsItem.removeComment(comment);
+        System.out.println("Comment removed from news: " + newsItem.getTopic());
+    }
+
+    public void displayAllNews() {
+    	for (News news : news) {
+            System.out.println("Topic: " + news.getTopic());
+            System.out.println("Description: " + news.getDescription());
+            System.out.println("Comments:");
+            for (Comment comment : news.getComments()) {
+                System.out.println("- " + comment.getAuthor().getName() + ": " + comment.getContent());
+            }
+            System.out.println("-----");
+        }
     }
 }
