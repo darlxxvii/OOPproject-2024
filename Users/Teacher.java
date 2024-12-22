@@ -133,5 +133,18 @@ public class Teacher extends Employee implements Researcher {
     public List<Review> getReviews() {
         return reviews;
     }
+
+System.out.println(getName() + " initialized as teacher with position: " + position + " and experience: " + yearsOfExperience);
+System.out.println(getName() + " sent complaint: " + complaintText + " with urgency: " + urgencyLevel);
+System.out.println(getName() + " viewed their info.");
+System.out.println("Course assigned to " + getName() + ": " + course.getName());
+System.out.println("Review added for " + getName() + ": " + review.getText());
+System.out.println("Mark " + mark.getGrade() + " has been assigned to " + student.getName() + " for course " + course.getName());
+System.out.println(getName() + " is conducting research on: " + topic);
+System.out.println(getName() + " published a research paper: " + paper.getTitle());
+System.out.println(getName() + " calculated H-Index: " + hIndex);
+System.out.println(getName() + " has total citations: " + totalCitations);
+System.out.println(getName() + " updated years of experience: " + yearsOfExperience);
+
     
 }
