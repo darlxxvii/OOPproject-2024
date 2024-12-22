@@ -28,10 +28,12 @@ public class Journal {
 		researchPapers.add(paper);
 }
 	public void addSubscriber(User user) {
-        if (!subscribers.contains(user)) {
-            subscribers.add(user);
-            System.out.println(user.getName() + " subscribed to " + name);
-        }
+	    if (!subscribers.contains(user)) {
+	        subscribers.add(user);
+	        System.out.println(user.getName() + " subscribed to " + name);
+	    } else {
+	        System.out.println(user.getName() + " is already subscribed to " + name);
+	    }
 	}
 	
 	public void removeSubscriber(User user) {
