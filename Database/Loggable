@@ -1,0 +1,10 @@
+package Database;
+
+import SystemParts.Course;
+
+public interface Loggable {
+    // Метод для записи логов действий пользователя
+    void logAction(String action);
+
+	
+}
