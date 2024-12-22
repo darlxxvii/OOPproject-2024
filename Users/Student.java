@@ -49,7 +49,9 @@ public class Student extends User implements Researcher, Observer {
     private Organizations headOrganization;
     private List<ResearchPaper> researchPapers;
 	private CompletionStatus completionStatus;
-	private ResearcherHelper researcherHelper;  
+	private ResearcherHelper researcherHelper; 
+        private List<Course> enrolledCourses = new ArrayList<>();
+	private List<ResearchPaper> publishedPapers; 
     
     public Student(String name, String surname, String email, int enrollmentYear, DegreeLevel degreeLevel, Schools school, EducationalProgram educationalProgram) {
     	super(name, surname, email);
@@ -64,6 +66,8 @@ public class Student extends User implements Researcher, Observer {
         this.completedCourses = new HashMap<>();
         this.activities = new ArrayList<>();
         this.organizations = new HashMap<>();
+	this.enrolledCourses = new ArrayList<>();
+        this.publishedPapers = new ArrayList<>();
         this.setMembershipStartDates(new HashMap<>());
         this.setHeadOrganization(null);
         this.setResearchPapers(new ArrayList<>());
@@ -111,14 +115,57 @@ public class Student extends User implements Researcher, Observer {
         return GPA;
     }
 
-    public void registerForCourse(Course course) {
-        if (courseMarks.containsKey(course)) {
-            System.out.println("Already registered for the course: " + course.getName());
-            return;
+    public boolean registerCourse(Course course, Manager manager) {
+        if (course.getType() == CourseType.ELECTIVE) {
+            courseMarks.put(course, null);  
+            return true;
         }
-        courseMarks.put(course, new Mark(this, course, 0.0, new Date()));
-        System.out.println("Registered for course: " + course.getName());
+
+        if ((course.getType() == CourseType.MAJOR && getEducationalProgram() == EducationalProgram.IS) ||
+            (course.getType() == CourseType.MINOR && getEducationalProgram() == EducationalProgram.ITM)) {
+            courseMarks.put(course, null);  
+            return true;
+        }
+
+        System.out.println("Student cannot register for course: " + course.getName());
+        return false; 
     }
+
+    public void addMark(Course course, Mark mark) {
+        courseMarks.put(course, mark);
+        updateGPA(); 
+    }
+
+    public double updateGPA() {
+        double totalPoints = 0;
+        int courseCount = 0;
+
+        for (Map.Entry<Course, Mark> entry : courseMarks.entrySet()) {
+            Mark mark = entry.getValue();
+            if (mark != null) { 
+                totalPoints += mark.getMark();
+                courseCount++;
+            }
+        }
+
+        if (courseCount > 0) {
+            this.GPA = totalPoints / courseCount;
+        } else {
+            this.GPA = 0.0; 
+        }
+
+        return this.GPA;
+    }
+
+
+    public void displayMarks() {
+        System.out.println("Marks for " + getName() + ":");
+        for (Map.Entry<Course, Mark> entry : courseMarks.entrySet()) {
+            System.out.println(entry.getKey().getName() + ": " + entry.getValue().getGrade());
+            System.out.println("Points: " + entry.getValue().calculateTotal());
+        }
+        }
+
 
     
     public void dropCourse(Course course) {
@@ -410,6 +457,18 @@ public class Student extends User implements Researcher, Observer {
 	}
 	public void setResearchPapers(List<ResearchPaper> researchPapers) {
 		this.researchPapers = researchPapers;
+	}
+	public List<Course> getEnrolledCourses() {
+	    return enrolledCourses;
+	}
+
+	public void addCourse(Course course) {
+	    enrolledCourses.add(course);
+	}
+	
+	@Override
+	public String toString() {
+	    return "Student{name='" + this.getName() + "', email='" + this.getEmail() + "', GPA=" + this.getGPA() + "}";
 	}
 }
 /*this.enrolledCourses = new ArrayList<Course>();
