@@ -62,9 +62,5 @@ public class MasterStudent extends Student implements Researcher {
         return researcherHelper.getTotalCitations();
     }
 
-    @Override
-    public String getName() {
-        return super.getName();
-    }
 
 }
