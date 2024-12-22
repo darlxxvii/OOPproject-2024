@@ -30,7 +30,7 @@ import SystemParts.Report;
 import SystemParts.Request;
 import Comparators.GPAComparator;
 import Comparators.StudentNameComparator;
-//import Comparators.YearsOfExpComparator;
+import Comparators.YearsOfExpComparator;
 import Comparators.TeacherNameComparator;
 //import Comparators.DegreeLevelComparator;
 
@@ -378,23 +378,28 @@ public class Manager extends Employee {
         newsItem.addComment(comment);
         System.out.println("Comment added to news: " + newsItem.getTopic());
     }
-
-//    public void removeCommentFromNews(News newsItem, Comment comment) {
-//        newsItem.removeComment(comment);
-//        System.out.println("Comment removed from news: " + newsItem.getTopic());
-//    }
-
-//    public void displayAllNews() {
-//    	for (News news : news) {
-//            System.out.println("Topic: " + news.getTopic());
-//            System.out.println("Description: " + news.getDescription());
-//            System.out.println("Comments:");
-//            for (Comment comment : news.getComments()) {
-//                System.out.println("- " + comment.getAuthor().getName() + ": " + comment.getContent());
-//            }
-//            System.out.println("-----");
-//        }
-//    }
+	
+	public void removeCommentFromNews(News newsItem, Comment comment) {
+        newsItem.removeComment(comment);
+        System.out.println("Comment removed from news: " + newsItem.getTopic());
+    }
+    
+    public void displayAllNews() {
+        for (News newsItem : news) { 
+            System.out.println("Title: " + newsItem.getTopic());
+            System.out.println("Content: " + newsItem.getDescription());
+        }
+    }
+    
+    public void displayAllComments() {
+    	for (News newsItem : news) { 
+    		System.out.println("Comments: ");
+    	for (Comment comment : newsItem.getComments()) { 
+            System.out.println("- " + comment.getAuthor().getName() + ": " + comment.getContent());
+        }
+        System.out.println("-----");
+    }
+    }
     public void logCourseDetails(Course course, EducationalProgram program, int yearOfStudy) {
         System.out.println(getName() + " added course: " + course.getName() + " | Program: " + program.getFullName() + " | Year: " + yearOfStudy);
     }
