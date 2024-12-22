@@ -13,14 +13,19 @@ public class DiplomaProject {
     private Researcher Supervisor;
     private CompletionStatus completionStatus;
 
-    public DiplomaProject(String projectTitle, Researcher Supervisor) {
-    	if (Supervisor.calculateHIndex() <= 3) {
-            throw new IllegalArgumentException("The supervisor's H-index must be greater than 3 to supervise the project.");
-        }
+    public DiplomaProject(String projectTitle) {
         this.projectTitle = projectTitle;
-        this.Supervisor = Supervisor;
         this.publishedPapers = new ArrayList<>();
         this.completionStatus = CompletionStatus.PLANNED;
+    }
+    
+
+	public void setSupervisor(Researcher newSupervisor) {
+        if (newSupervisor.calculateHIndex() <= 3) {
+            throw new IllegalArgumentException("The new supervisor's H-index must be greater than 3.");
+        }
+        this.Supervisor = newSupervisor;
+        System.out.println("Supervisor changed to: " + newSupervisor.getName());
     }
 
 	public void addResearchPaper(ResearchPaper paper) {
@@ -35,6 +40,12 @@ public class DiplomaProject {
         this.completionStatus = CompletionStatus.IN_PROGRESS;
         System.out.println("The project '" + projectTitle + "' has started and is now in progress.");
     }
+    
+    public void completeProject() {
+        this.completionStatus = CompletionStatus.COMPLETED;
+        System.out.println("The project '" + projectTitle + "' has been completed.");
+    }
+
     public CompletionStatus getCompletionStatus() {
         return completionStatus;
     }
