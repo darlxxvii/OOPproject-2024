@@ -23,6 +23,7 @@ public class ResearchPaper implements Serializable {
         this.keywords = keywords;
     }
     
+ // Method to get citation format
     public String getCitationFormat(CitationFormat format) {
         switch (format) {
             case BIBTEX:
@@ -45,6 +46,7 @@ public class ResearchPaper implements Serializable {
         }
     }
 
+    // Method to load the object from a file using deserialization
     public static ResearchPaper deserializeFromFile(String fileName) {
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName))) {
             return (ResearchPaper) in.readObject();  // Deserialize the object
