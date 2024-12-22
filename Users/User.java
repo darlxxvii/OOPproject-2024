@@ -89,6 +89,20 @@ public class User implements Loggable {
         logAction("Пользователь " + name + " обновил свой профиль."); // Логируем действие
     }
 
+    // Метод для обновления номера телефона
+    public void updatePhoneNumber(String newPhoneNumber) {
+        validatePhoneNumber(newPhoneNumber);  // Проверяем корректность нового номера
+        this.phoneNumber = newPhoneNumber; // Обновляем номер телефона
+        logAction("Пользователь " + name + " обновил номер телефона на " + newPhoneNumber); // Логируем действие
+    }
+
+    // Метод для обновления пароля
+    public void updatePassword(String newPassword) {
+        validatePassword(newPassword); // Проверяем корректность нового пароля
+        this.password = newPassword; // Обновляем пароль
+        logAction("Пользователь " + name + " обновил свой пароль."); // Логируем действие
+    }
+
     public String getName() {
         return name; // Возвращаем имя пользователя
     }
