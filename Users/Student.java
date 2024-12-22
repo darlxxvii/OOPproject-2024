@@ -1,6 +1,7 @@
 package Users;
 
 import Enums.CompletionStatus;
+import Enums.CourseType;
 import Enums.DegreeLevel;
 import Enums.EducationalProgram;
 import Enums.Organizations;
@@ -23,7 +24,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import Activities.ActivityFactory;
 import Activities.ExtracurricularActivity;
@@ -37,7 +37,7 @@ public class Student extends User implements Researcher, Observer {
     private Schools school;
     private int credits;
     private double GPA;
-    private final Map<Course, Mark> courseMarks;
+    private final HashMap<Course, Mark> courseMarks;
     protected Map<String, Integer> completedCourses;
     private Transcript transcript;
     private boolean isResearcher;
@@ -50,7 +50,7 @@ public class Student extends User implements Researcher, Observer {
     private List<ResearchPaper> researchPapers;
 	private CompletionStatus completionStatus;
 	private ResearcherHelper researcherHelper; 
-        private List<Course> enrolledCourses = new ArrayList<>();
+    private List<Course> enrolledCourses = new ArrayList<>();
 	private List<ResearchPaper> publishedPapers; 
     
     public Student(String name, String surname, String email, int enrollmentYear, DegreeLevel degreeLevel, Schools school, EducationalProgram educationalProgram) {
@@ -66,7 +66,7 @@ public class Student extends User implements Researcher, Observer {
         this.completedCourses = new HashMap<>();
         this.activities = new ArrayList<>();
         this.organizations = new HashMap<>();
-	this.enrolledCourses = new ArrayList<>();
+	    this.enrolledCourses = new ArrayList<>();
         this.publishedPapers = new ArrayList<>();
         this.setMembershipStartDates(new HashMap<>());
         this.setHeadOrganization(null);
@@ -92,7 +92,7 @@ public class Student extends User implements Researcher, Observer {
     }
     public void earnCredits(int credits) {
         this.credits += credits;
-        logAction("Earned " + credits + " credits. Total: " + this.credits);
+        System.out.println(getName() + " earned " + credits + " credits. Total: " + this.credits);
     }
     
     public void completeCourse(String courseName, int creditValue) {
@@ -101,7 +101,6 @@ public class Student extends User implements Researcher, Observer {
             earnCredits(creditValue);
         } else {
             System.out.println(getName() + " has already completed " + courseName);
-            logAction("Attempted to complete course " + courseName + ", but already completed.");
         }
     }
     
@@ -113,34 +112,28 @@ public class Student extends User implements Researcher, Observer {
             totalCourses++;
         }
         this.GPA = totalCourses > 0 ? totalPoints / totalCourses : 0.0;
-        logAction("Calculated GPA: " + GPA);
         return GPA;
     }
 
-    public boolean registerCourse(Course course, Manager manager) {
+    public boolean registerForCourse(Course course, Manager manager) {
         if (course.getType() == CourseType.ELECTIVE) {
-            courseMarks.put(course, null);
-            logAction("Registered for elective course: " + course.getName());
+            courseMarks.put(course, null);  
             return true;
         }
 
         if ((course.getType() == CourseType.MAJOR && getEducationalProgram() == EducationalProgram.IS) ||
-                (course.getType() == CourseType.MINOR && getEducationalProgram() == EducationalProgram.ITM)) {
-                courseMarks.put(course, null);
-                logAction("Registered for " + course.getType() + " course: " + course.getName());
-                return true;
-            }
-
+            (course.getType() == CourseType.MINOR && getEducationalProgram() == EducationalProgram.ITM)) {
+            courseMarks.put(course, null);  
+            return true;
+        }
 
         System.out.println("Student cannot register for course: " + course.getName());
-        logAction("Attempted to register for " + course.getName() + ", but not eligible.");
-        return false;
+        return false; 
     }
 
     public void addMark(Course course, Mark mark) {
         courseMarks.put(course, mark);
-        updateGPA();
-        logAction("Added mark for course " + course.getName() + ": " + mark.getGrade());
+        updateGPA(); 
     }
 
     public double updateGPA() {
@@ -149,7 +142,7 @@ public class Student extends User implements Researcher, Observer {
 
         for (Map.Entry<Course, Mark> entry : courseMarks.entrySet()) {
             Mark mark = entry.getValue();
-            if (mark != null) {
+            if (mark != null) { 
                 totalPoints += mark.getMark();
                 courseCount++;
             }
@@ -160,11 +153,9 @@ public class Student extends User implements Researcher, Observer {
         } else {
             this.GPA = 0.0; 
         }
-        
-        logAction("Updated GPA: " + this.GPA);
+
         return this.GPA;
     }
-
 
     public void displayMarks() {
         System.out.println("Marks for " + getName() + ":");
@@ -172,141 +163,123 @@ public class Student extends User implements Researcher, Observer {
             System.out.println(entry.getKey().getName() + ": " + entry.getValue().getGrade());
             System.out.println("Points: " + entry.getValue().calculateTotal());
         }
-        logAction("Displayed marks for student " + getName());
     }
     
     public void dropCourse(Course course) {
         courseMarks.remove(course);
-        logAction("Dropped course: " + course.getName());
+        System.out.println("Dropped course: " + course.getName());
     }
-
     public void addExtraCurricularActivity(String activityType) {
         ExtracurricularActivity activity = ActivityFactory.createActivity(activityType);
         activity.addActivity(activityType); // Add the activity
-        logAction("Added extracurricular activity: " + activityType);
     }
-
     public void viewInfoAboutTeacher(Course course) {
-        course.viewInstructorsInfo();
-        logAction("Viewed instructor information for course: " + course.getName());
+        course.viewInstructorsInfo();  
     }
 
     public void viewMarks(Course course) {
         Mark mark = courseMarks.get(course);
         if (mark != null) {
             System.out.println("Mark for " + course.getName() + ": " + mark.getGrade());
-            logAction("Viewed marks for course " + course.getName());
         }
     }
 
     public void rateTeacher(Teacher teacher, String comment, int rating) {
         if (rating < 1 || rating > 5) {
             System.out.println("Rating must be between 1 and 5.");
-            logAction("Attempted to rate teacher " + teacher.getName() + " with invalid rating: " + rating);
             return;
         }
-        Review review = new Review(comment, rating, true);
+        Review review = new Review(comment, rating, true); 
         teacher.addReview(review);
-        logAction("Rated teacher " + teacher.getName() + ": " + rating + " stars.");
+        System.out.println("Your anonymous review has been added for " + teacher.getName()+" "+teacher.getSurname());
     }
     
     public boolean isEligibleForGraduation() {
-        boolean eligible = credits >= degreeLevel.getRequiredCredits() && checkAdditionalRequirements();
-        logAction("Checked eligibility for graduation: " + (eligible ? "Eligible" : "Not Eligible"));
-        return eligible;
+        return credits >= degreeLevel.getRequiredCredits() && checkAdditionalRequirements();
     }
-
+    
     protected boolean checkAdditionalRequirements() {
-        // Additional checks (if any) can be added here
         return true;
     }
-
+    
     public void sendRequest(String name, String surname, String email, Request request) {
         Dean.getInstance(name, surname, email).receiveRequest(getName(), request);
-        logAction("Sent request: " + request.getDescription() + " to Dean.");
     }
-
     public void addActivity(String activity) {
         activities.add(activity);
-        logAction("Added activity: " + activity);
+        System.out.println("Added activity: " + activity);
     }
 
     public void joinOrganization(Organizations organization) {
         if (membershipStartDates.containsKey(organization)) {
             System.out.println("Already a member of " + organization);
-            logAction("Tried to join organization " + organization + ", but already a member.");
         } else {
             membershipStartDates.put(organization, LocalDate.now());
-            logAction("Joined organization: " + organization);
+            System.out.println("Joined organization: " + organization);
         }
     }
-
+    
     public void becomeHead(Organizations organization) {
         if (!membershipStartDates.containsKey(organization)) {
             System.out.println("You need to join the organization first.");
-            logAction("Attempted to become head of " + organization + " without joining first.");
         } else if (LocalDate.now().minusYears(1).isBefore(membershipStartDates.get(organization))) {
             System.out.println("You must be a member for at least a year to become head.");
-            logAction("Attempted to become head of " + organization + " without meeting membership duration.");
         } else {
             setHeadOrganization(organization);
-            logAction("Became head of organization: " + organization);
+            System.out.println("You are now the head of " + organization);
         }
     }
+    
     public void update(String message) {
         System.out.println(getName() + " received notification: " + message);
-        logAction("Received notification: " + message);
     }
-
+    
     public void applyForInternship(String companyName) {
         System.out.println("Applied for an internship at " + companyName);
-        logAction("Applied for internship at " + companyName);
     }
-
+    
     public void assignDiplomaProject(DiplomaProject diplomaProject) {
         this.diplomaProject = diplomaProject;
-        logAction("Assigned diploma project: " + diplomaProject.getProjectTitle());
+        System.out.println("Assigned diploma project: " + diplomaProject.getProjectTitle());
     }
-
+    
     public void changeEducationalProgram(EducationalProgram newProgram) {
         if (!school.isProgramAvailable(newProgram)) {
             throw new IllegalArgumentException("Program not available at the specified school.");
         }
         this.educationalProgram = newProgram;
-        logAction("Changed educational program to: " + newProgram);
     }
 
     //methods for Diploma project
-    
     public void startDiplomaProject() {
         if (degreeLevel == DegreeLevel.BACHELOR && getYearOfStudy() == 4) {
             this.diplomaProject = new DiplomaProject("Bachelor's Thesis: " + getName());
             this.setCompletionStatus(CompletionStatus.IN_PROGRESS);
-            logAction("Started Bachelor's diploma project: " + diplomaProject.getProjectTitle());
+            System.out.println("Started Bachelor's diploma project: " + diplomaProject.getProjectTitle());
         } else if (degreeLevel == DegreeLevel.MASTER || degreeLevel == DegreeLevel.PHD) {
             this.diplomaProject = new DiplomaProject("Graduate Thesis: " + getName());
             this.setCompletionStatus(CompletionStatus.IN_PROGRESS);
-            logAction("Started Graduate diploma project: " + diplomaProject.getProjectTitle());
+            System.out.println("Started Graduate diploma project: " + diplomaProject.getProjectTitle());
         } else {
             System.out.println("Diploma project is not applicable for this degree level yet.");
-            logAction("Attempted to start diploma project for non-relevant degree level.");
         }
     }
+    
     public void submitForReview() {
         if (diplomaProject != null && diplomaProject.getCompletionStatus() == CompletionStatus.IN_PROGRESS) {
             diplomaProject.setCompletionStatus(CompletionStatus.REVIEW_PENDING);
-            logAction(getName() + " has submitted their project for review: " + diplomaProject.getProjectTitle());
+            System.out.println(getName() + " has submitted their project for review: " + diplomaProject.getProjectTitle());
         } else {
-            logAction("Project must be in progress before submitting for review.");
+            System.out.println("Project must be in progress before submitting for review.");
         }
     }
 
     public void defendProject(boolean success) {
         if (diplomaProject != null && diplomaProject.getCompletionStatus() == CompletionStatus.REVIEW_PENDING) {
             diplomaProject.setCompletionStatus(success ? CompletionStatus.DEFENDED : CompletionStatus.FAILED);
-            logAction(getName() + " has " + (success ? "successfully defended" : "failed to defend") + " their project: " + diplomaProject.getProjectTitle());
+            System.out.println(getName() + " has " + (success ? "successfully defended" : "failed to defend") + " their project: " + diplomaProject.getProjectTitle());
         } else {
-            logAction("Project must be under review before it can be defended.");
+            System.out.println("Project must be under review before it can be defended.");
         }
     }
     //Researcher Methods
@@ -314,50 +287,38 @@ public class Student extends User implements Researcher, Observer {
 
     @Override
     public void conductResearch(String topic) {
-        if (isResearcher) {
-            researcherHelper.conductResearch(topic);
-            logAction(getName() + " has started research on the topic: " + topic);
-        } else {
-            logAction(getName() + " is not a researcher yet, cannot start research.");
-        }
+        researcherHelper.conductResearch(topic);
     }
 
     @Override
     public void publishPaper(ResearchPaper paper) {
-        if (isResearcher) {
-            researcherHelper.publishPaper(paper);
-            logAction(getName() + " has published a paper: " + paper.getTitle());
-        } else {
-            logAction(getName() + " is not a researcher yet, cannot publish papers.");
-        }
+        researcherHelper.publishPaper(paper);
     }
 
     @Override
     public List<ResearchPaper> getPublishedPapers() {
-        logAction(getName() + " requested the list of published papers.");
         return researcherHelper.getPublishedPapers();
     }
 
     @Override
     public int calculateHIndex() {
-        logAction(getName() + " requested calculation of h-index.");
         return researcherHelper.calculateHIndex();
     }
 
     @Override
     public int getTotalCitations() {
-        logAction(getName() + " requested total citations count.");
         return researcherHelper.getTotalCitations();
     }
 
+    // Additional method so student to become a researcher 
     public void becomeResearcher() {
         if (isResearcher) {
-            logAction(getName() + " is already a researcher.");
+            System.out.println(this.getName() + " is already a researcher.");
             return;
         }
         isResearcher = true;
         this.researcherHelper = new ResearcherHelper(); // Ensure researcherHelper is initialized
-        logAction(getName() + " has chosen to become a researcher.");
+        System.out.println(getName() + " has chosen to become a researcher.");
     }
 
     //getters and setters
@@ -485,9 +446,6 @@ public class Student extends User implements Researcher, Observer {
 	public void setCompletionStatus(CompletionStatus completionStatus) {
 		this.completionStatus = completionStatus;
 	} 
-	public String toString() {
-		return "Student id:"+studentID;
-	}
 	public List<ResearchPaper> getResearchPapers() {
 		return researchPapers;
 	}
@@ -504,20 +462,6 @@ public class Student extends User implements Researcher, Observer {
 	
 	@Override
 	public String toString() {
-	    return "Student{name='" + this.getName() + "', email='" + this.getEmail() + "', GPA=" + this.getGPA() + "}";
+	    return "Student{name='" + this.getName() + ", id="+studentID+"', email='" + this.getEmail() + "', GPA=" + this.getGPA() + "}";
 	}
 }
-/*this.enrolledCourses = new ArrayList<Course>();
-public void viewCourses() {
-for (Course course : enrolledCourses) {
-    System.out.println(course.getName());
-}
-
-    public List<Course> getEnrolledCourses() {
-        return enrolledCourses;
-    }
-    
-    protected String generateUniqueID() {
-        return "S" + UUID.randomUUID().toString().substring(0, 8);
-    }
-}*/
