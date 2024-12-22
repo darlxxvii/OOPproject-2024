@@ -2,21 +2,22 @@ package SystemParts;
 
 import Users.Student;
 import Users.Teacher;
+import Enums.CourseType;
+import Enums.Schools;
 import java.util.*;
 
-import Enums.CourseType;
-
 public class Course {
+
     private String id;
     private String name;
     private Integer credits;
-    private String school;
     private CourseType type;
+    private Schools school;
     private List<Teacher> instructors;
     private List<Lesson> lessons;
     private Map<Student, Mark> studentMarks;
 
-    public Course(String id, String name, Integer credits, String school, CourseType type) {
+    public Course(String id, String name, Integer credits, Schools school, CourseType type) {
         this.id = id;
         this.name = name;
         this.credits = credits;
@@ -59,11 +60,11 @@ public class Course {
         this.credits = credits;
     }
 
-    public String getSchool() {
+    public Schools getSchool() {
         return school;
     }
 
-    public void setSchool(String school) {
+    public void setSchool(Schools school) {
         this.school = school;
     }
 
@@ -99,7 +100,7 @@ public class Course {
         studentMarks.remove(student);
     }
 
-        public void viewInstructorsInfo() {
+    public void viewInstructorsInfo() {
         for (Teacher teacher : instructors) {
             teacher.viewInfoAboutTeacher();
             System.out.println();
